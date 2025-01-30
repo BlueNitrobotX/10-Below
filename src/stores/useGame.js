@@ -70,17 +70,6 @@ export default create(subscribeWithSelector((set) =>
                     })
                 },
 
-/**
- * Current animations list:
- * 'Falling to landing' playerModel.animations[0]
- * 'Falling_Root' playerModel.animations[1]
- * 'Idle' playerModel.animations[2]
- * 'Jump Idle' playerModel.animations[3]
- * 'Jump' playerModel.animations[4]
- * 'Run' playerModel.animations[5]
- * 'Walking' playerModel.animations[6]
- */
-
             idle: () => 
                 {
                     set((state) => 

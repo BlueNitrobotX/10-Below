@@ -32,18 +32,18 @@ export default function Experience()
         { name: "action4", keys: ["KeyF"] },
       ]
 
-    const playerUrl = './animatedModel4.glb'
+    // const playerUrl = './animatedModel4.glb'
     const playerModel = useGLTF("./animatedModel4.glb")
 
-    const animationSet = {
-            idle: 'Idle',
-            walk: 'Walking',
-            run: 'Run',
-            jump: 'Jump',
-            jumpIdle: 'Jump Idle',
-            jumpLand: 'Falling to landing',
-            fall: 'Falling_Root',
-    }
+    // const animationSet = {
+    //         idle: 'Idle',
+    //         walk: 'Walking',
+    //         run: 'Run',
+    //         jump: 'Jump',
+    //         jumpIdle: 'Jump Idle',
+    //         jumpLand: 'Falling to landing',
+    //         fall: 'Falling_Root',
+    // }
 
 /**
  * Current animations list:
@@ -56,8 +56,8 @@ export default function Experience()
  * 'Walking' playerModel.animations[6]
  */
 
-      console.log(playerModel.animations, useGLTF(playerUrl))
-    return <>
+
+return <>
 
         <OrbitControls makeDefault />
 
@@ -75,13 +75,13 @@ export default function Experience()
 
                 <KeyboardControls map={keyboardMap}>
 
-                <Ecctrl disableFollowCam={ true } debug={ true } mode='FixedCamera' floatingDis={ 0 } floatHeight={ 0.01 } capsuleHalfHeight={ 0.45 } animated >
+                <Ecctrl disableFollowCam={ true } debug={ false } mode='FixedCamera' floatingDis={ 0 } floatHeight={ 0.01 } capsuleHalfHeight={ 0.45 } animated={ false } >
 
-                    <EcctrlAnimation characterURL={ playerUrl } animationSet={ animationSet } >
+                    {/* <EcctrlAnimation characterURL={ playerUrl } animationSet={ animationSet } > */}
                     
                         <Player />
                 
-                    </EcctrlAnimation>
+                    {/* </EcctrlAnimation> */}
                 
                 </Ecctrl>
 

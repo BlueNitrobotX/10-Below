@@ -7,6 +7,7 @@ import * as THREE from 'three'
 import useGame from "./stores/useGame"
 import PlayerModel from "./PlayerModel"
 import { GLTFLoader } from "three/examples/jsm/Addons.js"
+import { useControls } from "leva"
 
 export default function Player()
 {
@@ -63,17 +64,46 @@ export default function Player()
 
     // }, [])
 
-    const playerModel = useLoader(GLTFLoader, './animatedModel3.glb')
+    const playerModel = useLoader(GLTFLoader, './animatedModel6.glb')
 
     const playerAnimations = useAnimations(playerModel.animations, playerModel.scene)
 
+    const { animationName } = useControls({
+        animationName: { options: playerAnimations.names }
+    })
 
     useEffect(() => 
     {
-        const action = playerAnimations.actions.Falling_Root
-        action.play()
-    }, [])
+        const action = playerAnimations.actions[animationName]
+        action
+            .reset()
+            .fadeIn(0.5)
+            .play()
+            
+        return () => 
+        {
+            action.fadeOut(0.5)
+        }
 
+    }, [ animationName ])
+
+    /**
+    * Current animations list:
+    * 'Falling' 
+    * 'Gangnam Style'
+    * 'Idle' 
+    * 'Jumping' 
+    * 'Running' 
+    * 'Walking'
+    */
+
+
+
+
+
+
+
+    
     // const playerModelPath = "./kenney_animated-characters-3/Model/characterMedium.fbx"
     // const playerModel = useFBX(playerModelPath)
     // const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
@@ -84,13 +114,13 @@ export default function Player()
 
             <Suspense fallback={ null } >
 
-                {/* <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } map={ playerTexture } /> */}
+                <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
 
                 {/* <mesh ref={ body } geometry={ player.geometry } rotation-x={ Math.PI * - 0.5 } scale={ 0.4 } position-y={ -0.75 } >
                     <meshStandardMaterial map={ playerTexture } />
                 </mesh> */}
 
-                <PlayerModel scale={ 0.4 } position-y={ - 0.75 } />
+                {/* <PlayerModel scale={ 0.4 } position-y={ - 0.75 } /> */}
 
             </Suspense>
     
