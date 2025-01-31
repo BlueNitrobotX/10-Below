@@ -16,28 +16,28 @@ export default function() {
     function nowMenu() {
         menuState = 'menu'
         menu()
-        console.log('now menu')
+        // console.log('now menu')
 
     }
 
     function nowSettings() {
         menuState = 'settings'
         settings()
-        console.log('now settings')
+        // console.log('now settings')
 
     }
 
     function nowCredits() {
         menuState = 'credits'
         credits()
-        console.log('now credits')
+        // console.log('now credits')
 
     }
 
     function nowPlay() {
         menuState = 'hidden'
         start()
-        console.log('now play')
+        // console.log('now play')
 
     }
 

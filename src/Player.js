@@ -11,8 +11,8 @@ import { useControls } from "leva"
 
 export default function Player()
 {
-    const body = useRef()
-    const { rapier, world } = useRapier()
+    // const body = useRef()
+    // const { rapier, world } = useRapier()
 
     const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
     const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
@@ -39,9 +39,9 @@ export default function Player()
 
     const reset = () =>
     {
-        body.current.setTranslation({ x: 0, y: 1, z: 0 })
-        body.current.setLinvel({ x: 0, y: 0, z: 0 })
-        body.current.setAngvel({ x: 0, y: 0, z: 0 })
+        // body.current.setTranslation({ x: 0, y: 1, z: 0 })
+        // body.current.setLinvel({ x: 0, y: 0, z: 0 })
+        // body.current.setAngvel({ x: 0, y: 0, z: 0 })
     }
 
 
@@ -68,24 +68,42 @@ export default function Player()
 
     const playerAnimations = useAnimations(playerModel.animations, playerModel.scene)
 
-    const { animationName } = useControls({
-        animationName: { options: playerAnimations.names }
-    })
+    // const { animationName } = useControls({
+    //     animationName: { options: playerAnimations.names, value: "Idle" }
+    // })
+
+    // useEffect(() => 
+    // {
+        
+    //     const action = playerAnimations.actions[animationName]
+    //     action
+    //         .reset()
+    //         .fadeIn(0.5)
+    //         .play()
+            
+    //     return () => 
+    //     {
+    //         action.fadeOut(0.5)
+    //     }
+
+    // }, [ animationName ])
 
     useEffect(() => 
     {
-        const action = playerAnimations.actions[animationName]
-        action
+        const action = playerAnimations.actions.Idle
+        action 
             .reset()
             .fadeIn(0.5)
             .play()
-            
+        
         return () => 
         {
             action.fadeOut(0.5)
         }
 
-    }, [ animationName ])
+    }, [])
+
+
 
     /**
     * Current animations list:

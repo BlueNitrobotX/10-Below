@@ -1,4 +1,4 @@
-import { useGLTF, useAnimations, Stage, KeyboardControls, OrbitControls } from '@react-three/drei'
+import { useGLTF, useAnimations, Stage, KeyboardControls, OrbitControls, PointerLockControls, CameraControls, useCursor } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
 import { Physics } from '@react-three/rapier'
@@ -6,14 +6,12 @@ import { Perf } from 'r3f-perf'
 import Ecctrl, { EcctrlAnimation } from "ecctrl"
 import Player from './Player.js'
 import useGame from './stores/useGame.js'
-import { useMemo } from 'react'
+import { useMemo, useState, useRef, useEffect } from 'react'
+import { useFrame, useThree } from '@react-three/fiber'
+import { FogExp2 } from 'three'
 
 export default function Experience()
 {
-
-    // const run = useGame((state) => state.run)
-    // const idle = useGame((state) => state.idle)
-    // const jump = useGame((state) => state.jump)
 
     /**
      *  ECCTRL CONTROLS
@@ -32,18 +30,7 @@ export default function Experience()
         { name: "action4", keys: ["KeyF"] },
       ]
 
-    // const playerUrl = './animatedModel4.glb'
     const playerModel = useGLTF("./animatedModel4.glb")
-
-    // const animationSet = {
-    //         idle: 'Idle',
-    //         walk: 'Walking',
-    //         run: 'Run',
-    //         jump: 'Jump',
-    //         jumpIdle: 'Jump Idle',
-    //         jumpLand: 'Falling to landing',
-    //         fall: 'Falling_Root',
-    // }
 
 /**
  * Current animations list:
@@ -56,39 +43,32 @@ export default function Experience()
  * 'Walking' playerModel.animations[6]
  */
 
+    const { scene } = useThree()
+    scene.fog = new FogExp2("#ffffff", 0.1)
 
-return <>
+    const player = useRef()
+    const { camera } = useThree()
 
-        <OrbitControls makeDefault />
+    
+    return <>
+
+        {/* <OrbitControls makeDefault={ true } /> */}
 
         <color args={ [ '#bdedfc' ] } attach="background" />
 
         {/* <Perf /> */}
-
-        <Physics debug={ true } >
-
+        
+        <Physics debug={ false } >
             {/* <Lights /> */}
-
             <Stage shadows={ false } >
-
                 <Level />
 
                 <KeyboardControls map={keyboardMap}>
-
-                <Ecctrl disableFollowCam={ true } debug={ false } mode='FixedCamera' floatingDis={ 0 } floatHeight={ 0.01 } capsuleHalfHeight={ 0.45 } animated={ false } >
-
-                    {/* <EcctrlAnimation characterURL={ playerUrl } animationSet={ animationSet } > */}
-                    
-                        <Player />
-                
-                    {/* </EcctrlAnimation> */}
-                
-                </Ecctrl>
-
+                    <Ecctrl floatHeight={ 0.11 } camZoomSpeed={ 0 } camInitDis={ -5 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
+                            <Player ref={ player } />
+                    </Ecctrl>
                 </KeyboardControls>
-
             </Stage>
-
         </Physics>
 
     </>

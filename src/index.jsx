@@ -4,7 +4,8 @@ import { Canvas } from '@react-three/fiber'
 import Experience from './Experience.jsx'
 import { KeyboardControls } from "@react-three/drei"
 import Menu from './Menu.jsx'
-
+import * as THREE from 'three'
+import { useRef } from 'react'
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
@@ -15,7 +16,7 @@ root.render( <>
                 fov: 45,
                 near: 0.1,
                 far: 200,
-                position: [ 2.5, 4, 6 ]
+                position: [ 0, 2, 0 ]
             } }
         >
             <Experience />    
