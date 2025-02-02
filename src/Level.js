@@ -6,7 +6,7 @@ import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
 import { Noise } from 'noisejs'
 import alea from 'alea'
 import { useControls } from 'leva'
-
+import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 
 
 
@@ -69,31 +69,31 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
             
             for(let j = ( verticesSize / -2 ); j < ( verticesSize + 1 ); j++) {
                 verticesXY.push(i)
+                verticesXY.push('placeholder')
                 verticesXY.push(j)
+                
             }
         }
-
-        console.log(verticesXY)
 
         // Convert to array with x, y, and z coordinates (z is height in this case)
         let verticesXYZ = new Float32Array( verticesXY.length )
         const noise = new Noise(seed)
 
-        for(let i = 0; i < verticesXY.length; i ++ ) {
+        for(let i = 0; i < verticesXY.length; i++ ) {
 
-            if(i % 3 != 0) {
+            if(verticesXY[i] != 'placeholder') {
                 verticesXYZ[i] = verticesXY[i] // push x and y
             }
 
-            else {
+            else if(verticesXY[i] === 'placeholder') {
                 verticesXYZ[i] =            // push z (height)
                 ( 
-                    ( 
+                    ( ( 
                         ( noise.simplex2(i, i + 1) )
                         + ( 0.5 * noise.simplex2( ( i * 2 ), ( (i + 1) * 2 ) ) )
                         + ( 0.25 * noise.simplex2( ( i * 4 ), ( ( i + 1) * 4 ) ) ) 
                     )
-                        / ( 1 + 0.5 + 0.25 )    
+                        / ( 1 + 0.5 + 0.25 ) * 10 )   
                 ) + 10
             }
             
@@ -104,12 +104,6 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
     }, [])
 
-    const noise = new Noise(5)
-
-    let num = noise.simplex2(8000, 80000)
-
-    console.log(num)
-
     console.log(heightMap)
 
     const terrain = useMemo(() => 
@@ -117,10 +111,20 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
         const procedurallyGeneratedFloorGeometry = new THREE.BufferGeometry()
 
         procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
+
+        const indices = []
+
+        for(let i = 0; i < heightMap.length - 2; i += 3) {
+
+            indices.push(heightMap[i])
+            indices.push(heightMap[i + 2])
+        }
+
+        procedurallyGeneratedFloorGeometry.setIndex(indices)
         
-        // const boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 900 )
-        // procedurallyGeneratedFloorGeometry.boundingSphere() = boundingSphere
-        // procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
+        procedurallyGeneratedFloorGeometry.computeVertexNormals()
+        procedurallyGeneratedFloorGeometry.computeBoundingSphere()
+        procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
 
         const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue' })
 
@@ -141,8 +145,8 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
     return <>
 
-        <RigidBody>
-            <mesh geometry={ terrain.geometry } material={ terrain.material } />
+        <RigidBody type='fixed' colliders='hull' > 
+            <mesh geometry={ terrain.geometry } material={ terrain.material } scale={ 4 } />
         </RigidBody>
 
         <RigidBody type='fixed' >

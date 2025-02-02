@@ -44,7 +44,7 @@ export default function Experience()
  */
 
     const { scene } = useThree()
-    scene.fog = new FogExp2("#ffffff", 0.09)
+    // scene.fog = new FogExp2("#ffffff", 0.09)
 
     const player = useRef()
     const { camera } = useThree()
@@ -52,19 +52,19 @@ export default function Experience()
     
     return <>
 
-        {/* <OrbitControls makeDefault={ true } /> */}
+        <OrbitControls makeDefault={ true } />
 
         <color args={ [ '#bdedfc' ] } attach="background" />
 
         {/* <Perf /> */}
         
-        <Physics debug={ false } >
+        <Physics debug={ true } >
             {/* <Lights /> */}
             <Stage shadows={ false } >
                 <Level />
 
                 <KeyboardControls map={keyboardMap}>
-                    <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -5 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
+                    <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -5 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
                             <Player ref={ player } />
                     </Ecctrl>
                 </KeyboardControls>
