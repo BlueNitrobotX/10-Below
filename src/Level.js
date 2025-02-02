@@ -3,7 +3,7 @@ import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
-import { createNoise2D } from 'simplex-noise'
+import { Noise } from 'noisejs'
 import alea from 'alea'
 import { useControls } from 'leva'
 
@@ -52,31 +52,99 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
 const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
-    // useEffect(() => 
-    // {
-    //     const seed = alea(111)
-    //     let e = createNoise2D(seed)
-    //                 + 0.5 * createNoise2D(2 * seed)
-    //                 + 0.25 * createNoise2D(4 * seed)
-    //     let noise2D =  e / (1 + 0.5 + 0.25)
+    //Calculations for procedural generation
+    const heightMap = useMemo(() => 
+    {
+        const seed = alea(Math.random())
+        // let e = createNoise2D(seed)
+        //             + 0.5 * createNoise2D(2 * seed)
+        //             + 0.25 * createNoise2D(4 * seed)
+        // let noise2D =  e / (1 + 0.5 + 0.25)
 
 
-    //     let noiseSize = 20
-    //     let verticesXY = new Float32Array([])
+        let verticesSize = 40  // Width and Height of the square that will be displaced according to the height map
+        let verticesXY = []
 
-    //     for(let i = -10; i < noiseSize; i++) {
-
-    //         verticesXY.push(i) // Fills the array with placeholder values that will be changed later
+        for(let i = ( verticesSize / -2 ); i < ( verticesSize + 1 ); i++) {
             
-    //         for(let j = 0; j < Math.sqrt(noiseSize); j++) { 
-    //             verticesXY[j] += j
-    //         }
-    //     }
+            for(let j = ( verticesSize / -2 ); j < ( verticesSize + 1 ); j++) {
+                verticesXY.push(i)
+                verticesXY.push(j)
+            }
+        }
 
-    // }, [])
+        console.log(verticesXY)
+
+        // Convert to array with x, y, and z coordinates (z is height in this case)
+        let verticesXYZ = new Float32Array( verticesXY.length )
+        const noise = new Noise(seed)
+
+        for(let i = 0; i < verticesXY.length; i ++ ) {
+
+            if(i % 3 != 0) {
+                verticesXYZ[i] = verticesXY[i] // push x and y
+            }
+
+            else {
+                verticesXYZ[i] =            // push z (height)
+                ( 
+                    ( 
+                        ( noise.simplex2(i, i + 1) )
+                        + ( 0.5 * noise.simplex2( ( i * 2 ), ( (i + 1) * 2 ) ) )
+                        + ( 0.25 * noise.simplex2( ( i * 4 ), ( ( i + 1) * 4 ) ) ) 
+                    )
+                        / ( 1 + 0.5 + 0.25 )    
+                ) + 10
+            }
+            
+            
+        }
+
+        return verticesXYZ
+
+    }, [])
+
+    const noise = new Noise(5)
+
+    let num = noise.simplex2(8000, 80000)
+
+    console.log(num)
+
+    console.log(heightMap)
+
+    const terrain = useMemo(() => 
+    {
+        const procedurallyGeneratedFloorGeometry = new THREE.BufferGeometry()
+
+        procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
+        
+        // const boundingSphere = new THREE.Sphere(new THREE.Vector3(0, 0, 0), 900 )
+        // procedurallyGeneratedFloorGeometry.boundingSphere() = boundingSphere
+        // procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
+
+        const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue' })
+
+        return {
+            geometry: procedurallyGeneratedFloorGeometry,
+            material: tempFloorMaterial
+        }
+
+    }, [])
+
+
+
+
+
+
+
 
 
     return <>
+
+        <RigidBody>
+            <mesh geometry={ terrain.geometry } material={ terrain.material } />
+        </RigidBody>
+
         <RigidBody type='fixed' >
             <mesh geometry={ floorBoxGeometry } material={ invisibleMaterial } scale={ [ 30, 1, 30 ] } />
         </RigidBody>
