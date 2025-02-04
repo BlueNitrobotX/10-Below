@@ -52,17 +52,22 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
 const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
+    // Declare variables for terrain generation
+    const terrainValues = useMemo(() => {
+
+        const seed = alea(Math.random())
+        const size = 40
+
+        return { seed: seed, size: size }
+
+    }, [])
+
+
     //Calculations for procedural generation
     const heightMap = useMemo(() => 
     {
-        const seed = alea(Math.random())
-        // let e = createNoise2D(seed)
-        //             + 0.5 * createNoise2D(2 * seed)
-        //             + 0.25 * createNoise2D(4 * seed)
-        // let noise2D =  e / (1 + 0.5 + 0.25)
 
-
-        let verticesSize = 40  // Width and Height of the square that will be displaced according to the height map
+        let verticesSize = terrainValues.size  // Width and Height of the square that will be displaced according to the height map
         let verticesXY = []
 
         for(let i = ( verticesSize / -2 ); i < ( verticesSize + 1 ); i++) {
@@ -77,7 +82,7 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
         // Convert to array with x, y, and z coordinates (z is height in this case)
         let verticesXYZ = new Float32Array( verticesXY.length )
-        const noise = new Noise(seed)
+        const noise = new Noise(terrainValues.seed)
 
         for(let i = 0; i < verticesXY.length; i++ ) {
 
@@ -104,38 +109,79 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
     }, [])
 
-    console.log(heightMap)
+    function generateGridIndices(widthSegments, heightSegments) {
+        let indices = [];
+        
+        for (let x = 0; x < widthSegments; x++) {  // Loop through columns first
+            for (let y = 0; y < heightSegments; y++) {  // Then rows
+                // Adjusted indexing to match column-major order
+                let topLeft     = y + x * (heightSegments + 1);
+                let bottomLeft  = topLeft + 1;
+                let topRight    = topLeft + (heightSegments + 1);
+                let bottomRight = topRight + 1;
+    
+                // ⚠️ FIX: Swap topRight and bottomLeft for correct triangle orientation
+                indices.push(topLeft, topRight, bottomLeft);
+                indices.push(bottomLeft, topRight, bottomRight);
+            }
+        }
+        
+        return indices
+    }
 
     const terrain = useMemo(() => 
     {
         const procedurallyGeneratedFloorGeometry = new THREE.BufferGeometry()
+        const pointsGeometry = new THREE.BufferGeometry()
 
-        procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
 
+        // const indices = generateGridIndices(terrainValues.size, terrainValues.size)
         const indices = []
+        const verticesCount = []
 
-        for(let i = 0; i < heightMap.length - 2; i += 3) {
+        for(let i = 0; i < ( heightMap.length / 3 ); i++ ) {
 
-            indices.push(heightMap[i])
-            indices.push(heightMap[i + 2])
+            verticesCount.push(i)
+
+        }
+
+        // ( ( heightMap.length / 3 ) - terrainValues.size )
+
+        for(let i = 0; i < ( ( heightMap.length / 3 ) - terrainValues.size ); i ++) {
+
+            indices.push(verticesCount[i])
+            indices.push(verticesCount[i + 1])
+            indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size])
+
+            indices.push(verticesCount[i])
+            indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size])
+            indices.push(verticesCount[i + 1 + 1.5 * terrainValues.size])
+
         }
 
         procedurallyGeneratedFloorGeometry.setIndex(indices)
-        
+        procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
+        pointsGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
+
         procedurallyGeneratedFloorGeometry.computeVertexNormals()
         procedurallyGeneratedFloorGeometry.computeBoundingSphere()
         procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
 
-        const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue' })
+        const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue', wireframe: false })
+        const tempPointsMaterial = new THREE.PointsMaterial( { color: 'black', size: 0.5, sizeAttenuation: true } )
 
         return {
             geometry: procedurallyGeneratedFloorGeometry,
-            material: tempFloorMaterial
+            material: tempFloorMaterial,
+            pointsMaterial: tempPointsMaterial,
+            indices: indices,
+            pointsGeometry: pointsGeometry
         }
 
     }, [])
 
-
+    console.log("Vertices:", heightMap);
+    console.log("Indices:", terrain.indices);
 
 
 
@@ -147,6 +193,10 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
         <RigidBody type='fixed' colliders='hull' > 
             <mesh geometry={ terrain.geometry } material={ terrain.material } scale={ 4 } />
+        </RigidBody>
+
+        <RigidBody type='fixed' colliders='hull' > 
+            <points geometry={ terrain.pointsGeometry } material={ terrain.pointsMaterial } scale={ 4 } />
         </RigidBody>
 
         <RigidBody type='fixed' >

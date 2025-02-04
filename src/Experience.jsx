@@ -58,7 +58,7 @@ export default function Experience()
 
         {/* <Perf /> */}
         
-        <Physics debug={ true } >
+        <Physics debug={ false } >
             {/* <Lights /> */}
             <Stage shadows={ false } >
                 <Level />
