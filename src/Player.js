@@ -14,8 +14,8 @@ export default function Player()
     // const body = useRef()
     // const { rapier, world } = useRapier()
 
-    const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
-    const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
+    // const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
+    // const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
 
     const start = useGame((state) => state.start)
     const end = useGame((state) => state.end)
@@ -45,11 +45,11 @@ export default function Player()
     }
 
 
-    useFrame((state, delta) => {
+    // useFrame((state, delta) => {
 
-        const cameraPosition = new THREE.Vector3()
+    //     const cameraPosition = new THREE.Vector3()
 
-    })
+    // })
 
 
     const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')

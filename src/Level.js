@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { CuboidCollider, RigidBody } from '@react-three/rapier'
 import { useMemo, useState, useRef, useEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
 import { Noise } from 'noisejs'
 import alea from 'alea'
@@ -52,11 +52,17 @@ const floorMaterial = new THREE.MeshStandardMaterial({
 const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
 const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
+    // const { camera } = useThree()
+    // camera.position.set( 0, 5, 0 )
+    // camera.near = 0.1
+    // camera.far = 500
+    // camera.updateProjectionMatrix()
+
     // Declare variables for terrain generation
     const terrainValues = useMemo(() => {
 
         const seed = alea(Math.random())
-        const size = 40
+        const size = 80
 
         return { seed: seed, size: size }
 
@@ -98,8 +104,8 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
                         + ( 0.5 * noise.simplex2( ( i * 2 ), ( (i + 1) * 2 ) ) )
                         + ( 0.25 * noise.simplex2( ( i * 4 ), ( ( i + 1) * 4 ) ) ) 
                     )
-                        / ( 1 + 0.5 + 0.25 ) * 10 )   
-                ) + 10
+                        / ( 1 + 0.5 + 0.25 ) ** 3 )   
+                )
             }
             
             
@@ -146,18 +152,28 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
         }
 
         // ( ( heightMap.length / 3 ) - terrainValues.size )
+        // ( verticesCount.length ) - ( terrainValues.size * 1.55 )
+        // ( terrainValues.size * 1.5 + 1 )
 
-        for(let i = 0; i < ( ( heightMap.length / 3 ) - terrainValues.size ); i ++) {
+        for(let i = 0; i < ( verticesCount.length) - ( terrainValues.size * 1.5 + 1 ); i ++) {
 
-            indices.push(verticesCount[i])
-            indices.push(verticesCount[i + 1])
-            indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size])
-
-            indices.push(verticesCount[i])
-            indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size])
-            indices.push(verticesCount[i + 1 + 1.5 * terrainValues.size])
+            if( verticesCount[i] != 0 && ( i + 1 ) % ( terrainValues.size * 1.5 + 1 ) === 0 )
+            {
+                continue
+            } else {
+                
+                indices.push(verticesCount[i + 1]) // Bottom Left
+                indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size]) // Bottom right
+                indices.push(verticesCount[i])  // Top left
+                
+                indices.push(verticesCount[i]) // Top left
+                indices.push(verticesCount[i + 2 + 1.5 * terrainValues.size]) // Bottom right
+                indices.push(verticesCount[i + 1 + 1.5 * terrainValues.size]) // Top right
+            }
 
         }
+
+        console.log("VerticesCount", verticesCount)
 
         procedurallyGeneratedFloorGeometry.setIndex(indices)
         procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
@@ -168,7 +184,7 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
         procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
 
         const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue', wireframe: false })
-        const tempPointsMaterial = new THREE.PointsMaterial( { color: 'black', size: 0.5, sizeAttenuation: true } )
+        const tempPointsMaterial = new THREE.PointsMaterial( { color: 'black', size: 0.7, sizeAttenuation: true } )
 
         return {
             geometry: procedurallyGeneratedFloorGeometry,
@@ -180,8 +196,8 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
     }, [])
 
-    console.log("Vertices:", heightMap);
-    console.log("Indices:", terrain.indices);
+    console.log("Vertices:", heightMap)
+    console.log("Indices:", terrain.indices)
 
 
 
@@ -191,13 +207,13 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
     return <>
 
-        <RigidBody type='fixed' colliders='hull' > 
-            <mesh geometry={ terrain.geometry } material={ terrain.material } scale={ 4 } />
+        <RigidBody type='fixed' colliders='trimesh' > 
+            <mesh geometry={ terrain.geometry } material={ terrain.material } scale={ 10 } position-y={ - 10 } />
         </RigidBody>
 
-        <RigidBody type='fixed' colliders='hull' > 
+        {/* <RigidBody type='fixed' colliders='hull' > 
             <points geometry={ terrain.pointsGeometry } material={ terrain.pointsMaterial } scale={ 4 } />
-        </RigidBody>
+        </RigidBody> */}
 
         <RigidBody type='fixed' >
             <mesh geometry={ floorBoxGeometry } material={ invisibleMaterial } scale={ [ 30, 1, 30 ] } />
