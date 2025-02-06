@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { CuboidCollider, RigidBody } from '@react-three/rapier'
+import { CuboidCollider, RigidBody, TrimeshCollider } from '@react-three/rapier'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
@@ -7,58 +7,30 @@ import { Noise } from 'noisejs'
 import alea from 'alea'
 import { useControls } from 'leva'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
+import { cameraNear } from 'three/tsl'
 
 
 
 export function Level()
 {
+    const { camera } = useThree()
 
-    const textureLoader = new THREE.TextureLoader()
+    useFrame(() => {
+        camera.near = 0.05
+        camera.far = 10000
+        camera.updateProjectionMatrix()
+      })
+    
 
-const floorColorMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_col_1k.jpg')
-const floorARMMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_arm_1k.jpg')
-const floorHeightMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_height_1k.jpg')
-const floorNormalMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_nor_gl_1k.jpg')
+    // useEffect(() => {
+    //     camera.near = 0.1
+    //     camera.far = 500
+    //     camera.updateProjectionMatrix()
 
-floorColorMap.repeat.set(10, 10)
-floorARMMap.repeat.set(10, 10)
-floorHeightMap.repeat.set(10, 10)
-floorNormalMap.repeat.set(10, 10)
+    //     return camera
 
-floorColorMap.wrapS = THREE.RepeatWrapping
-floorARMMap.wrapS = THREE.RepeatWrapping
-floorNormalMap.wrapS = THREE.RepeatWrapping
-floorHeightMap.wrapS = THREE.RepeatWrapping
+    // }, [camera])
 
-floorColorMap.wrapT = THREE.RepeatWrapping
-floorARMMap.wrapT = THREE.RepeatWrapping
-floorNormalMap.wrapT = THREE.RepeatWrapping
-floorHeightMap.wrapT = THREE.RepeatWrapping
-
-const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
-const floorBoxGeometry = new THREE.BoxGeometry(1, 1, 1, 100, 1, 100)
-const planeGeometry = new THREE.PlaneGeometry(1, 1, 100, 100)
-const floorMaterial = new THREE.MeshStandardMaterial({
-    map: floorColorMap,
-    color: 'gray',
-    aoMap: floorARMMap,
-    metalnessMap: floorARMMap,
-    roughnessMap: floorARMMap,
-    normalMap: floorNormalMap,
-    displacementMap: floorHeightMap,
-    displacementScale: 0.025,
-    displacementBias: -0.1
-})
-const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
-const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
-
-    // const { camera } = useThree()
-    // camera.position.set( 0, 5, 0 )
-    // camera.near = 0.1
-    // camera.far = 500
-    // camera.updateProjectionMatrix()
-
-    // Declare variables for terrain generation
     const terrainValues = useMemo(() => {
 
         const seed = alea(Math.random())
@@ -67,6 +39,7 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
         return { seed: seed, size: size }
 
     }, [])
+
 
 
     //Calculations for procedural generation
@@ -105,55 +78,29 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
                         + ( 0.25 * noise.simplex2( ( i * 4 ), ( ( i + 1) * 4 ) ) ) 
                     )
                         / ( 1 + 0.5 + 0.25 ) ** 3 )   
-                )
+                ) + 1
             }
             
             
         }
 
-        return verticesXYZ
+        return { heightMap: verticesXYZ, verticesXY: verticesXY}
 
     }, [])
-
-    function generateGridIndices(widthSegments, heightSegments) {
-        let indices = [];
-        
-        for (let x = 0; x < widthSegments; x++) {  // Loop through columns first
-            for (let y = 0; y < heightSegments; y++) {  // Then rows
-                // Adjusted indexing to match column-major order
-                let topLeft     = y + x * (heightSegments + 1);
-                let bottomLeft  = topLeft + 1;
-                let topRight    = topLeft + (heightSegments + 1);
-                let bottomRight = topRight + 1;
-    
-                // ⚠️ FIX: Swap topRight and bottomLeft for correct triangle orientation
-                indices.push(topLeft, topRight, bottomLeft);
-                indices.push(bottomLeft, topRight, bottomRight);
-            }
-        }
-        
-        return indices
-    }
 
     const terrain = useMemo(() => 
     {
         const procedurallyGeneratedFloorGeometry = new THREE.BufferGeometry()
         const pointsGeometry = new THREE.BufferGeometry()
 
-
-        // const indices = generateGridIndices(terrainValues.size, terrainValues.size)
         const indices = []
         const verticesCount = []
 
-        for(let i = 0; i < ( heightMap.length / 3 ); i++ ) {
+        for(let i = 0; i < ( heightMap.heightMap.length / 3 ); i++ ) {
 
             verticesCount.push(i)
 
         }
-
-        // ( ( heightMap.length / 3 ) - terrainValues.size )
-        // ( verticesCount.length ) - ( terrainValues.size * 1.55 )
-        // ( terrainValues.size * 1.5 + 1 )
 
         for(let i = 0; i < ( verticesCount.length) - ( terrainValues.size * 1.5 + 1 ); i ++) {
 
@@ -173,49 +120,102 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
         }
 
-        console.log("VerticesCount", verticesCount)
+        const verticesColors = new Float32Array(heightMap.heightMap.length)
 
+        for( let i = 0; i < heightMap.heightMap.length; i += 3 ) {
+
+            const y = heightMap.heightMap[i + 1]
+            const color = new THREE.Color().setHSL( 0.5, 1, ( y - 0.3 ) )
+            verticesColors[i] = color.r
+            verticesColors[i + 1] = color.g
+            verticesColors[ i + 2] = color.b
+
+        }
+
+
+        const uvs = new Float32Array([heightMap.verticesXY])
+
+        procedurallyGeneratedFloorGeometry.computeVertexNormals()
+        procedurallyGeneratedFloorGeometry.setAttribute('color', new THREE.BufferAttribute(verticesColors, 3 ) )
+        procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap.heightMap, 3 ) )
+        procedurallyGeneratedFloorGeometry.setAttribute("uv", new THREE.BufferAttribute( uvs, 2 ) )
         procedurallyGeneratedFloorGeometry.setIndex(indices)
-        procedurallyGeneratedFloorGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
-        pointsGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
+
+        // pointsGeometry.setAttribute( 'position', new THREE.BufferAttribute( heightMap, 3 ) )
 
         procedurallyGeneratedFloorGeometry.computeVertexNormals()
         procedurallyGeneratedFloorGeometry.computeBoundingSphere()
         procedurallyGeneratedFloorGeometry.setDrawRange(0, Infinity)
 
         const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue', wireframe: false })
-        const tempPointsMaterial = new THREE.PointsMaterial( { color: 'black', size: 0.7, sizeAttenuation: true } )
+
+        // const center = new THREE.Vector3()
+        // procedurallyGeneratedFloorGeometry.computeBoundingBox()
+        // procedurallyGeneratedFloorGeometry.boundingBox.getCenter(center)
+        // procedurallyGeneratedFloorGeometry.translate( - center.x, - center.y, - center.z )
 
         return {
             geometry: procedurallyGeneratedFloorGeometry,
             material: tempFloorMaterial,
-            pointsMaterial: tempPointsMaterial,
             indices: indices,
-            pointsGeometry: pointsGeometry
+            pointsGeometry: pointsGeometry,
+            uvs: uvs
         }
 
     }, [])
+    
+    const textureLoader = new THREE.TextureLoader()
 
-    console.log("Vertices:", heightMap)
-    console.log("Indices:", terrain.indices)
+    const floorColorMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_col_1k.jpg')
+    const floorARMMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_arm_1k.jpg')
+    const floorHeightMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_height_1k.jpg')
+    const floorNormalMap = textureLoader.load('./snow_field_aerial_1k/textures/snow_field_aerial_nor_gl_1k.jpg')
 
+    floorColorMap.repeat.set(terrainValues.size ** 4, terrainValues.size ** 4)
+    floorARMMap.repeat.set(terrainValues.size ** 4, terrainValues.size ** 4)
+    floorHeightMap.repeat.set(terrainValues.size ** 4, terrainValues.size ** 4)
+    floorNormalMap.repeat.set(terrainValues.size ** 4, terrainValues.size ** 4)
 
+    floorColorMap.wrapS = THREE.RepeatWrapping
+    floorARMMap.wrapS = THREE.RepeatWrapping
+    floorNormalMap.wrapS = THREE.RepeatWrapping
+    floorHeightMap.wrapS = THREE.RepeatWrapping
 
+    floorColorMap.wrapT = THREE.RepeatWrapping
+    floorARMMap.wrapT = THREE.RepeatWrapping
+    floorNormalMap.wrapT = THREE.RepeatWrapping
+    floorHeightMap.wrapT = THREE.RepeatWrapping
 
+    const boxGeometry = new THREE.BoxGeometry(1, 1, 1)
+    const floorBoxGeometry = new THREE.BoxGeometry(1, 1, 1, 100, 1, 100)
+    const planeGeometry = new THREE.PlaneGeometry(1, 1, 100, 100)
+    const floorMaterial = new THREE.MeshStandardMaterial({
+        map: floorColorMap,
+        color: 'white',
+        aoMap: floorARMMap,
+        metalnessMap: floorARMMap,
+        roughnessMap: floorARMMap,
+        normalMap: floorNormalMap,
+        displacementMap: floorHeightMap,
+        displacementScale: 0.025,
+        displacementBias: -0.1
+    })
+    const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
+    const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
-
+    console.log(heightMap.heightMap)
 
     return <>
 
-        <RigidBody type='fixed' colliders='trimesh' > 
-            <mesh geometry={ terrain.geometry } material={ terrain.material } scale={ 10 } position-y={ - 10 } />
+        <RigidBody type='fixed' colliders='trimesh'  position={ [ 0, -10, 0 ] } > 
+            <mesh geometry={ terrain.geometry } material={ floorMaterial } map={ floorColorMap } aoMap={ floorARMMap } roughnessMap={ floorARMMap } metalnessMap={ floorARMMap } normalMap={ floorNormalMap } displacementMap={ floorHeightMap } vertexColors scale={ 10 } position-y={ - 10 } />
         </RigidBody>
 
         {/* <RigidBody type='fixed' colliders='hull' > 
             <points geometry={ terrain.pointsGeometry } material={ terrain.pointsMaterial } scale={ 4 } />
         </RigidBody> */}
 
-        <RigidBody type='fixed' >
+        {/* <RigidBody type='fixed' >
             <mesh geometry={ floorBoxGeometry } material={ invisibleMaterial } scale={ [ 30, 1, 30 ] } />
         </RigidBody>
 
@@ -235,7 +235,7 @@ const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, op
 
         <RigidBody>
             <mesh geometry={ boxGeometry } material={ objectMaterial } position={ [ -6, 8, -2 ] } scale={ 1.5 } />
-        </RigidBody>
+        </RigidBody> */}
 
     </>
 }

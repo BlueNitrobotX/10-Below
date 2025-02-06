@@ -1,5 +1,5 @@
 import { useGLTF, Stage, KeyboardControls, OrbitControls } from '@react-three/drei'
-// import Lights from './Lights.jsx'
+import Lights from './Lights.jsx'
 import { Level } from './Level.js'
 import { Physics } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
@@ -54,21 +54,20 @@ export default function Experience()
 
         <OrbitControls makeDefault={ true } />
 
-        <color args={ [ '#bdedfc' ] } attach="background" />
+        <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
         
         <Physics debug={ true } >
-            {/* <Lights /> */}
-            <Stage shadows={ false } >
-                <Level />
-
+            <Lights />
+            {/* <Stage shadows={ true } > */}
+                <Level shadows />
                 <KeyboardControls map={keyboardMap}>
-                    <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -5 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
+                    <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
                             <Player ref={ player } />
                     </Ecctrl>
                 </KeyboardControls>
-            </Stage>
+            {/* </Stage> */}
         </Physics>
 
     </>
