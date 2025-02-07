@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { CuboidCollider, RigidBody, TrimeshCollider } from '@react-three/rapier'
+import { CuboidCollider, MeshCollider, RigidBody } from '@react-three/rapier'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
@@ -17,7 +17,7 @@ export function Level()
 
     useFrame(() => {
         camera.near = 0.05
-        camera.far = 10000
+        camera.far = 100 //10000 for debug/creation
         camera.updateProjectionMatrix()
       })
     
@@ -33,8 +33,8 @@ export function Level()
 
     const terrainValues = useMemo(() => {
 
-        const seed = alea(Math.random())
-        const size = 80
+        const seed = 2356 // alea(Math.random())
+        const size = 100
 
         return { seed: seed, size: size }
 
@@ -71,14 +71,14 @@ export function Level()
 
             else if(verticesXY[i] === 'placeholder') {
                 verticesXYZ[i] =            // push z (height)
-                ( 
+               ( ( 
                     ( ( 
                         ( noise.simplex2(i, i + 1) )
                         + ( 0.5 * noise.simplex2( ( i * 2 ), ( (i + 1) * 2 ) ) )
                         + ( 0.25 * noise.simplex2( ( i * 4 ), ( ( i + 1) * 4 ) ) ) 
                     )
-                        / ( 1 + 0.5 + 0.25 ) ** 3 )   
-                ) + 1
+                        / ( 1 + 0.5 + 0.25 ) )   
+                ) ** 2 ) * 3
             }
             
             
@@ -149,10 +149,10 @@ export function Level()
 
         const tempFloorMaterial = new THREE.MeshStandardMaterial( { color: 'blue', wireframe: false })
 
-        // const center = new THREE.Vector3()
-        // procedurallyGeneratedFloorGeometry.computeBoundingBox()
-        // procedurallyGeneratedFloorGeometry.boundingBox.getCenter(center)
-        // procedurallyGeneratedFloorGeometry.translate( - center.x, - center.y, - center.z )
+        const center = new THREE.Vector3(0, 0, 0)
+        procedurallyGeneratedFloorGeometry.computeBoundingBox()
+        procedurallyGeneratedFloorGeometry.boundingBox.getCenter(center)
+        procedurallyGeneratedFloorGeometry.translate( - center.x, - center.y, - center.z )
 
         return {
             geometry: procedurallyGeneratedFloorGeometry,
@@ -205,11 +205,16 @@ export function Level()
 
     console.log(heightMap.heightMap)
 
+
     return <>
 
-        <RigidBody type='fixed' colliders='trimesh'  position={ [ 0, -10, 0 ] } > 
-            <mesh geometry={ terrain.geometry } material={ floorMaterial } map={ floorColorMap } aoMap={ floorARMMap } roughnessMap={ floorARMMap } metalnessMap={ floorARMMap } normalMap={ floorNormalMap } displacementMap={ floorHeightMap } vertexColors scale={ 10 } position-y={ - 10 } />
+        <RigidBody type='fixed' colliders={ false }  > 
+            <MeshCollider type="trimesh" >
+            <mesh position={ [ 0, -10, 0 ] } geometry={ terrain.geometry } material={ invisibleMaterial }  scale={ 10 } />
+            </MeshCollider>
         </RigidBody>
+
+        <mesh position={ [ 0, -9.1, 0 ] } geometry={ terrain.geometry } material={ floorMaterial } map={ floorColorMap } aoMap={ floorARMMap } roughnessMap={ floorARMMap } metalnessMap={ floorARMMap } normalMap={ floorNormalMap } displacementMap={ floorHeightMap } vertexColors scale={ 10 } />
 
         {/* <RigidBody type='fixed' colliders='hull' > 
             <points geometry={ terrain.pointsGeometry } material={ terrain.pointsMaterial } scale={ 4 } />
