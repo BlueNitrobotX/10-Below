@@ -1,17 +1,25 @@
-import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment } from '@react-three/drei'
+import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
 import { Physics } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
 import Ecctrl from "ecctrl"
 import Player from './Player.js'
-// import useGame from './stores/useGame.js'
+import useGame from './stores/useGame.js'
 import { useMemo, useState, useRef, useEffect } from 'react'
-import { useFrame, useThree } from '@react-three/fiber'
+import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 
 export default function Experience()
 {
+    window.pauseState = true
+
+    useFrame(() => {
+
+        const pausePhysics =  window.pauseState
+
+        return { pauseState: pausePhysics }
+    })
 
     /**
      *  ECCTRL CONTROLS
@@ -27,10 +35,11 @@ export default function Experience()
         { name: "action1", keys: ["1"] },
         { name: "action2", keys: ["2"] },
         { name: "action3", keys: ["3"] },
-        { name: "action4", keys: ["KeyF"] },
+        { name: "pause", keys: ["KeyP"] },
       ]
 
     const playerModel = useGLTF("./animatedModel4.glb")
+
 
 /**
  * Current animations list:
@@ -57,15 +66,15 @@ export default function Experience()
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
-        
-        <Physics debug={ false } colliders={ false } >
+
+        <Physics debug={ false } colliders={ false } paused={ pauseState } >
             <Lights />
             {/* <Stage shadows={ true } > */}
                 <Environment background files={ './mud_road_puresky_1k.exr' } />
                 <Level shadows />
                 <KeyboardControls map={keyboardMap}>
                     <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
-                            <Player ref={ player } />
+                            <Player ref={ player }  />
                     </Ecctrl>
                 </KeyboardControls>
             {/* </Stage> */}

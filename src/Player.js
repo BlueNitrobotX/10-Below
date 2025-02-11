@@ -21,21 +21,7 @@ export default function Player()
     const end = useGame((state) => state.end)
     const restart = useGame((state) => state.restart)
 
-    // const animations = useAnimations('./kenney_animated-characters-3/Animations', body)
-
-    // const jump = () =>
-    // {
-    //     const origin = body.current.translation()
-    //     origin.y -= 0.31
-    //     const direction = { x: 0, y: -1, z: 0 }
-    //     const ray = new rapier.Ray(origin, direction)
-    //     const hit = world.castRay(ray, 10, true)
-
-    //     if(hit.timeOfImpact < 0.15)
-    //     {    
-    //     body.current.applyImpulse( { x: 0, y: 0.5, z: 0 } )
-    //     }
-    // }
+    const [ subscribeKeys, getKeys ] = useKeyboardControls()
 
     const reset = () =>
     {
@@ -44,6 +30,13 @@ export default function Player()
         // body.current.setAngvel({ x: 0, y: 0, z: 0 })
     }
 
+    function pauseGame() {
+        if(window.pauseState) {
+            window.pauseState = false
+        } else {
+            window.pauseState = true
+        }
+    }
 
     // useFrame((state, delta) => {
 
@@ -53,16 +46,6 @@ export default function Player()
 
 
     const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
-
-    // const player = useMemo(() => {
-
-    //     return {
-    //         // geometry: useFBX("./kenney_animated-characters-3/Model/characterMedium.fbx").children[0].geometry,
-    //         geometry: useGLTF("./animatedModel3.glb").geometry,
-    //         material: new THREE.MeshStandardMaterial({ map: playerTexture })
-    //     }
-
-    // }, [])
 
     const playerModel = useLoader(GLTFLoader, './animatedModel6.glb')
 
@@ -117,9 +100,27 @@ export default function Player()
 
 
 
+    
+    useEffect(() =>
+    {
+        subscribeKeys(
+            (state)=> state.pause,
+            (value) => 
+            {
+                // nothing
+            }
+        )
+    })
 
+    useFrame(() => {
 
+        const { pause } = getKeys()
+        
+        if(pause) {
+            pauseGame()
+        }
 
+    })
 
     
     // const playerModelPath = "./kenney_animated-characters-3/Model/characterMedium.fbx"
