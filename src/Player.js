@@ -21,8 +21,6 @@ export default function Player()
     const end = useGame((state) => state.end)
     const restart = useGame((state) => state.restart)
 
-    const [ subscribeKeys, getKeys ] = useKeyboardControls()
-
     const reset = () =>
     {
         // body.current.setTranslation({ x: 0, y: 1, z: 0 })
@@ -97,30 +95,6 @@ export default function Player()
     * 'Running' 
     * 'Walking'
     */
-
-
-
-    
-    useEffect(() =>
-    {
-        subscribeKeys(
-            (state)=> state.pause,
-            (value) => 
-            {
-                // nothing
-            }
-        )
-    })
-
-    useFrame(() => {
-
-        const { pause } = getKeys()
-        
-        if(pause) {
-            pauseGame()
-        }
-
-    })
 
     
     // const playerModelPath = "./kenney_animated-characters-3/Model/characterMedium.fbx"

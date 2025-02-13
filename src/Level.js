@@ -203,8 +203,6 @@ export function Level()
     const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
     const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
-    console.log(heightMap.heightMap)
-
 
     return <>
 

@@ -223,3 +223,41 @@ body,
     user-select: none;
     justify-content: center;
 }
+
+/* Intro Cutscene */
+
+/* .introText1
+{
+    text-align: center;
+    vertical-align: center;
+    font-family: Helvetica, Arial;
+    font-size: 5vh;
+    position: absolute;
+    background: transparent;
+    color: rgb(0, 0, 0);
+    padding: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-radius: 5px;
+    user-select: none;
+    pointer-events: none;
+    display: inline-block;
+}
+
+.introText2
+{
+    text-align: center;
+    vertical-align: center;
+    font-family: Helvetica, Arial;
+    font-size: 5vh;
+    position: absolute;
+    background: transparent;
+    color: rgb(0, 0, 0);
+    padding: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    border-radius: 5px;
+    user-select: none;
+    pointer-events: none;
+    display: inline-block;
+} */
