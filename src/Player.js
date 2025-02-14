@@ -28,13 +28,13 @@ export default function Player()
         // body.current.setAngvel({ x: 0, y: 0, z: 0 })
     }
 
-    function pauseGame() {
-        if(window.pauseState) {
-            window.pauseState = false
-        } else {
-            window.pauseState = true
-        }
-    }
+    // function pauseGame() {
+    //     if(window.pauseState) {
+    //         window.pauseState = false
+    //     } else {
+    //         window.pauseState = true
+    //     }
+    // }
 
     // useFrame((state, delta) => {
 

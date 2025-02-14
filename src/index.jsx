@@ -6,7 +6,7 @@ import { KeyboardControls, PerspectiveCamera, useKeyboardControls } from "@react
 import Menu from './Menu.jsx'
 import IntroScene from './IntroScene.jsx'
 import * as THREE from 'three'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -23,15 +23,23 @@ const keyboardMap = [
   ]
 
 let pauseState = true
+
+document.addEventListener("pause", () => {
+    pauseState = !pauseState
+    // console.log(pauseState)
+})
+
+
+
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
 root.render( <>
     <KeyboardControls map={keyboardMap}>
         
             <Canvas shadows >
-                <IntroScene pauseState={ pauseState } />
+                <IntroScene />
                     <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 1000 } position={ [ 0, 1, 0 ] } />
-                    <Experience />  
+                    <Experience pauseState={ pauseState } />  
             </Canvas>
         
         <Menu />

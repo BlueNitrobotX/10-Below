@@ -11,10 +11,16 @@ import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 
-export default function Experience()
+export default function Experience(pauseState)
 {
+    // let currentPauseState = useFrame(() => {
+    //     let a = pauseState.value
+        
+    //     return a
+    // })
 
-    let pauseState = false
+    const currentPauseState = pauseState.pauseState
+    console.log(currentPauseState)
 
     const playerModel = useGLTF("./animatedModel4.glb")
 
@@ -22,7 +28,7 @@ export default function Experience()
     const { scene } = useThree()
     scene.fog = new FogExp2("#ffffff", 0.02)
 
-    const player = useRef()
+    // const player = useRef()
     const { camera } = useThree()
 
     
@@ -34,14 +40,14 @@ export default function Experience()
 
         {/* <Perf /> */}
 
-            <Physics debug={ false } colliders={ false } paused={ pauseState } >
+            <Physics debug={ false } colliders={ false } key={ pauseState ? "paused" : "running" } paused={ currentPauseState } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
                     <Level shadows />
 
                         <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
-                                <Player ref={ player }  />
+                                <Player />
                         </Ecctrl>
                 {/* </Stage> */}
             </Physics>

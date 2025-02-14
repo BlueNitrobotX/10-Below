@@ -4,29 +4,36 @@ import { useFrame } from '@react-three/fiber'
 
 export default function() {
     
-    const [ subscribeKeys, getKeys ] = useKeyboardControls()
-    let [ pauseState, setPauseState ] = useState(true)
+    const pauseEvent = new Event("pause")
 
-    useEffect(() =>
-    {
-        subscribeKeys(
-            (state)=> state,
-            (value) => 
-            {
-                // nothing
-            }
-        )
-    })
+    const [ subscribeKeys, getKeys ] = useKeyboardControls()
+    // let [ pauseState, setPauseState ] = useState(true)
+
+    // useEffect(() =>
+    // {
+    //     subscribeKeys(
+    //         (state)=> state,
+    //         (value) => 
+    //         {
+    //             // nothing
+    //         }
+    //     )
+    // })
 
     useFrame(() => {
         
         const keys = getKeys()
 
         if(keys.pause === true) {
-            setPauseState(false)
+            document.dispatchEvent(pauseEvent)
         }
 
+
+
+
+
     })
+
     return <>
 
 
