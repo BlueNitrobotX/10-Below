@@ -224,6 +224,14 @@ body,
     justify-content: center;
 }
 
+.clickMe
+{
+    color: chartreuse;
+    user-select: none;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 /* Intro Cutscene */
 
 /* .introText1

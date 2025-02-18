@@ -1,4 +1,4 @@
-import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls } from '@react-three/drei'
+import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
 import { Physics } from '@react-three/rapier'
@@ -10,8 +10,9 @@ import useGame from './stores/useGame.js'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
+import { create } from 'zustand'
 
-export default function Experience(pauseState)
+export default function Experience()
 {
     // let currentPauseState = useFrame(() => {
     //     let a = pauseState.value
@@ -19,8 +20,8 @@ export default function Experience(pauseState)
     //     return a
     // })
 
-    const currentPauseState = pauseState.pauseState
-    console.log(currentPauseState)
+    // const currentPauseState = pauseState.pauseState
+    // console.log(currentPauseState)
 
     const playerModel = useGLTF("./animatedModel4.glb")
 
@@ -31,16 +32,37 @@ export default function Experience(pauseState)
     // const player = useRef()
     const { camera } = useThree()
 
+
     
+    const usePauseStore = create((set) => ({
+        paused: true,
+        toggle: () => { set((state) => ({ paused: !state.paused })) }
+    }))
+    
+    let paused = usePauseStore((state) => state.paused)
+    const toggle = usePauseStore((state) => state.toggle)
+    
+
+    // document.addEventListener("pause", () => {
+    //     toggle
+    //     console.log(toggle)
+    // })
+    
+    useFrame(() => {
+        console.log(paused)
+    })
+
     return <>
         
         {/* <OrbitControls makeDefault={ true } /> */}
+
+        <Html className='clickMe' position={ [ 0, 5, 5 ] } onClick={toggle} >clickme</Html>
 
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
 
-            <Physics debug={ false } colliders={ false } key={ pauseState ? "paused" : "running" } paused={ currentPauseState } >
+            <Physics debug={ false } colliders={ false } paused={ paused } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
