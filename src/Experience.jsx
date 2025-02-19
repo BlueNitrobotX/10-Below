@@ -10,7 +10,7 @@ import useGame from './stores/useGame.js'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
-import { create } from 'zustand'
+import { create, createStore } from 'zustand'
 
 export default function Experience()
 {
@@ -33,36 +33,50 @@ export default function Experience()
     const { camera } = useThree()
 
 
-    
-    const usePauseStore = create((set) => ({
-        paused: true,
-        toggle: () => { set((state) => ({ paused: !state.paused })) }
-    }))
-    
-    let paused = usePauseStore((state) => state.paused)
-    const toggle = usePauseStore((state) => state.toggle)
+    // const pauseStore = createStore((set) => ({
+    //     paused: true
+    // }) )
+
+
+    // let paused1 = pauseStore.getState()
+    // let paused = paused1.paused
+
+    // const [ key, setKey ] = useState(0)
+    const [ pauseState, setPauseState ] = useState(true)
+
+    useEffect(() => {
+
+        function unPausePhysics() {
+
+            // setKey(key + 1)
+            setPauseState(false)
+            // pauseStore.setState({paused: false})
+        }
+
+
     
 
-    // document.addEventListener("pause", () => {
-    //     toggle
-    //     console.log(toggle)
-    // })
+
+        document.addEventListener("beginStartSequence", () => {
+            // pauseStore.setState({ paused: false })
+            unPausePhysics()
+        })
+
+    }, [ pauseState ])
+
+
     
-    useFrame(() => {
-        console.log(paused)
-    })
+
 
     return <>
         
         {/* <OrbitControls makeDefault={ true } /> */}
 
-        <Html className='clickMe' position={ [ 0, 5, 5 ] } onClick={toggle} >clickme</Html>
-
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
 
-            <Physics debug={ false } colliders={ false } paused={ paused } >
+            <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />

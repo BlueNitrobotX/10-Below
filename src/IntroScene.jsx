@@ -4,7 +4,6 @@ import { useFrame } from '@react-three/fiber'
 
 export default function() {
     
-    const pauseEvent = new Event("pause")
 
     const [ subscribeKeys, getKeys ] = useKeyboardControls()
     // let [ pauseState, setPauseState ] = useState(true)
@@ -28,11 +27,26 @@ export default function() {
             document.dispatchEvent(pauseEvent)
         }
 
-
-
-
-
     })
+
+
+
+
+    // INTRO CUTSCENE SEQUENCE
+
+
+
+    // document.addEventListener("beginStartSequence", () => {
+    //     toggle
+    // })
+
+
+
+
+
+
+
+
 
     return <>
 

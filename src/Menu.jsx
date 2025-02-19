@@ -1,5 +1,5 @@
 import useGame from "./stores/useGame"
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, Suspense, useFrame, useState } from 'react'
 import { addEffect } from "@react-three/fiber"
 import { create } from "zustand"
 
@@ -38,9 +38,24 @@ export default function() {
     function nowPlay() {
         menuState = 'hidden'
         start()
+
+        const event = new Event("beginStartSequence")
+        document.dispatchEvent(event)
         // console.log('now play')
 
     }
+
+    const [ isVisible, setIsVisible ] = useState(true)
+
+    useEffect(() => {
+
+        const wait = setTimeout(() => {
+            setIsVisible(false)
+        }, 2000)
+
+        return () => clearTimeout(wait)
+
+    }, [isVisible])
 
 
 
@@ -65,6 +80,8 @@ export default function() {
         { phase === 'settings' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
 
         { phase === 'credits' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
+        
+        { isVisible === true && <div className="menuFallback" > Loading... </div>}
 
     </>
 }
