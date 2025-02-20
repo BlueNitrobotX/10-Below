@@ -33,39 +33,36 @@ export default function Experience()
     const { camera } = useThree()
 
 
-    // const pauseStore = createStore((set) => ({
-    //     paused: true
-    // }) )
-
-
-    // let paused1 = pauseStore.getState()
-    // let paused = paused1.paused
-
-    // const [ key, setKey ] = useState(0)
+    const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
     const [ pauseState, setPauseState ] = useState(true)
+
 
     useEffect(() => {
 
         function unPausePhysics() {
-
-            // setKey(key + 1)
             setPauseState(false)
-            // pauseStore.setState({paused: false})
         }
 
-
-    
-
-
         document.addEventListener("beginStartSequence", () => {
-            // pauseStore.setState({ paused: false })
             unPausePhysics()
+            const wait = setTimeout(() => {
+                setCurrentAnimation('Idle')
+            }, 2500)
+
         })
 
     }, [ pauseState ])
 
 
-    
+    /**
+    * Current animations list:
+    * 'Falling' 
+    * 'Gangnam Style'
+    * 'Idle' 
+    * 'Jumping' 
+    * 'Running' 
+    * 'Walking'
+    */
 
 
     return <>
@@ -82,9 +79,9 @@ export default function Experience()
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
                     <Level shadows />
 
-                        <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" >
-                                <Player />
-                        </Ecctrl>
+                        {/* <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" > */}
+                                <Player currentAnimation={ currentAnimation } />
+                        {/* </Ecctrl> */}
                 {/* </Stage> */}
             </Physics>
         

@@ -8,8 +8,9 @@ import useGame from "./stores/useGame"
 import PlayerModel from "./PlayerModel"
 import { GLTFLoader } from "three/examples/jsm/Addons.js"
 import { useControls } from "leva"
+import Ecctrl from 'ecctrl'
 
-export default function Player()
+export default function Player(currentAnimation)
 {
     // const body = useRef()
     // const { rapier, world } = useRapier()
@@ -69,20 +70,59 @@ export default function Player()
 
     // }, [ animationName ])
 
+
+    const actionIdle = playerAnimations.actions.Idle
+    const actionFalling = playerAnimations.actions.Falling
+    const actionGangnamStyle = playerAnimations.actions.Gangnam_Style
+    const actionJumping = playerAnimations.actions.Jumping
+    const actionRunning = playerAnimations.actions.Running
+    const actionWalking = playerAnimations.actions.Walking
+
+
+    function getAction(x) {
+
+        if(x === 'Idle') {
+            return actionIdle
+        }
+        else if(x === 'Falling') {
+            return actionFalling
+        }
+        else if(x === 'Gangnam Style') {
+            return actionGangnamStyle
+        }
+        else if(x === 'Jumping') {
+            return actionJumping
+        }
+        else if(x === 'Running') {
+            return actionRunning
+        }
+        else if(x === 'Walking') {
+            actionWalking
+        } else
+
+        console.log('[CUSTOM ERROR] prop currentAnimation not recognized by getAction function')
+        return null
+
+    }
+
     useEffect(() => 
     {
-        const action = playerAnimations.actions.Idle
-        action 
+
+        const action = getAction(currentAnimation.currentAnimation)
+
+        action
             .reset()
             .fadeIn(0.5)
             .play()
         
+
+
         return () => 
         {
             action.fadeOut(0.5)
         }
 
-    }, [])
+    }, [ currentAnimation ])
 
 
 
@@ -107,13 +147,9 @@ export default function Player()
 
             <Suspense fallback={ null } >
 
-                <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
-
-                {/* <mesh ref={ body } geometry={ player.geometry } rotation-x={ Math.PI * - 0.5 } scale={ 0.4 } position-y={ -0.75 } >
-                    <meshStandardMaterial map={ playerTexture } />
-                </mesh> */}
-
-                {/* <PlayerModel scale={ 0.4 } position-y={ - 0.75 } /> */}
+                <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 30 } >
+                    <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
+                </Ecctrl>
 
             </Suspense>
     

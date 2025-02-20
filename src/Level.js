@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import { CuboidCollider, MeshCollider, RigidBody } from '@react-three/rapier'
+import { CuboidCollider, MeshCollider, RigidBody, TrimeshCollider } from '@react-three/rapier'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { Float, Text, useGLTF, Wireframe, useTexture } from '@react-three/drei'
@@ -210,6 +210,7 @@ export function Level()
             <MeshCollider type="trimesh" >
             <mesh position={ [ 0, -10, 0 ] } geometry={ terrain.geometry } material={ invisibleMaterial }  scale={ 10 } />
             </MeshCollider>
+            
         </RigidBody>
 
         <mesh position={ [ 0, -9.1, 0 ] } geometry={ terrain.geometry } material={ floorMaterial } map={ floorColorMap } aoMap={ floorARMMap } roughnessMap={ floorARMMap } metalnessMap={ floorARMMap } normalMap={ floorNormalMap } displacementMap={ floorHeightMap } vertexColors scale={ 10 } />
