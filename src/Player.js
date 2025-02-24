@@ -9,6 +9,7 @@ import PlayerModel from "./PlayerModel"
 import { GLTFLoader } from "three/examples/jsm/Addons.js"
 import { useControls } from "leva"
 import Ecctrl from 'ecctrl'
+import { create } from 'zustand'
 
 export default function Player(currentAnimation)
 {
@@ -21,6 +22,7 @@ export default function Player(currentAnimation)
     const start = useGame((state) => state.start)
     const end = useGame((state) => state.end)
     const restart = useGame((state) => state.restart)
+    const phase = useGame((state) => state.phase)
 
     const reset = () =>
     {
@@ -43,6 +45,7 @@ export default function Player(currentAnimation)
 
     // })
 
+    const player = useRef()
 
     const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
 
@@ -124,7 +127,11 @@ export default function Player(currentAnimation)
 
     }, [ currentAnimation ])
 
-
+    useFrame(() => {
+        if( phase === 'playing') {
+            window.appData.playerPosition = player.current.translation()
+        }
+    })
 
     /**
     * Current animations list:
@@ -147,7 +154,7 @@ export default function Player(currentAnimation)
 
             <Suspense fallback={ null } >
 
-                <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 30 } >
+                <Ecctrl ref={ player } floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 60 } >
                     <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
                 </Ecctrl>
 

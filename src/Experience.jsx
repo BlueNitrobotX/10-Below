@@ -11,23 +11,17 @@ import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
+import * as THREE from 'three'
 
 export default function Experience()
 {
-    // let currentPauseState = useFrame(() => {
-    //     let a = pauseState.value
-        
-    //     return a
-    // })
 
-    // const currentPauseState = pauseState.pauseState
-    // console.log(currentPauseState)
-
+    const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
 
 
     const { scene } = useThree()
-    scene.fog = new FogExp2("#ffffff", 0.02)
+    // scene.fog = new FogExp2("#ffffff", 0.008)
 
     // const player = useRef()
     const { camera } = useThree()
@@ -35,24 +29,44 @@ export default function Experience()
 
     const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
     const [ pauseState, setPauseState ] = useState(true)
+    const [ trackingPlayer, setTrackingPlayer ] = useState(false)
+    
+    useEffect(() => {
+        window.appData = {
+            playerX: 0,
+            playerY: 60,
+            playerZ: 0
+        }
+    }, [])
 
-
+    // Custom animation manager/cutscene manager
     useEffect(() => {
 
         function unPausePhysics() {
             setPauseState(false)
         }
 
+        camera.position.set(-3, -3, 10)
+
+        // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
+            setTrackingPlayer(true)
             const wait = setTimeout(() => {
                 setCurrentAnimation('Idle')
-            }, 2500)
+                setTrackingPlayer(false)
+            }, 4250)
 
         })
 
     }, [ pauseState ])
 
+    useFrame((state) => {
+        if( trackingPlayer === true ) {
+            const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
+            state.camera.lookAt(cameraTarget)
+        }
+    })
 
     /**
     * Current animations list:

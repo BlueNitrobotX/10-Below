@@ -52,15 +52,10 @@ export default function() {
 
 
         <Text
+            position={ [ 0, 10, -10 ] }
             color="black"
 
-        >BlueNitrobotX Presents</Text>
-    
-
-        <Text
-            color="black"
-
-        >A React Three Fiber Game</Text>
+        >Where am I?</Text>
   
 
     </>

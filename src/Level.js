@@ -17,7 +17,7 @@ export function Level()
 
     useFrame(() => {
         camera.near = 0.05
-        camera.far = 100 //10000 for debug/creation
+        camera.far = 1000 //10000 for debug/creation
         camera.updateProjectionMatrix()
       })
     
