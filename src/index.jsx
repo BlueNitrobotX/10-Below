@@ -23,14 +23,6 @@ const keyboardMap = [
     { name: "pause", keys: ["KeyP"] },
   ]
 
-// let pauseState = true
-
-// document.addEventListener("pause", () => {
-//     pauseState = !pauseState
-//     // console.log(pauseState)
-// })
-
-
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
 root.render( <>
@@ -38,8 +30,7 @@ root.render( <>
 
             <Canvas shadows >
                 <IntroScene />
-                    <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 1000 } position={ [ 0, 1, 0 ] } />
-                    <Experience />  
+                <Experience />  
             </Canvas>
         
         <Menu />

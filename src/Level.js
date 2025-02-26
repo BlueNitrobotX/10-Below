@@ -20,16 +20,6 @@ export function Level()
         camera.far = 1000 //10000 for debug/creation
         camera.updateProjectionMatrix()
       })
-    
-
-    // useEffect(() => {
-    //     camera.near = 0.1
-    //     camera.far = 500
-    //     camera.updateProjectionMatrix()
-
-    //     return camera
-
-    // }, [camera])
 
     const terrainValues = useMemo(() => {
 

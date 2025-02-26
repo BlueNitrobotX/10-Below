@@ -12,6 +12,7 @@ import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
 import * as THREE from 'three'
+import { PerspectiveCamera } from '@react-three/drei'
 
 export default function Experience()
 {
@@ -30,7 +31,8 @@ export default function Experience()
     const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
     const [ pauseState, setPauseState ] = useState(true)
     const [ trackingPlayer, setTrackingPlayer ] = useState(false)
-    
+    const [ cameraLocked, setCameraLocked ] = useState(true)
+
     useEffect(() => {
         window.appData = {
             playerX: 0,
@@ -42,6 +44,7 @@ export default function Experience()
     // Custom animation manager/cutscene manager
     useEffect(() => {
 
+        setCameraLocked(false)
         function unPausePhysics() {
             setPauseState(false)
         }
@@ -52,9 +55,15 @@ export default function Experience()
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
             setTrackingPlayer(true)
+            
             const wait = setTimeout(() => {
                 setCurrentAnimation('Idle')
                 setTrackingPlayer(false)
+                
+                const wait2 = setTimeout(() => {
+                    setCameraLocked(false)
+                }, 1000)
+
             }, 4250)
 
         })
@@ -65,6 +74,10 @@ export default function Experience()
         if( trackingPlayer === true ) {
             const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
             state.camera.lookAt(cameraTarget)
+            // console.log(state.camera)
+        } else if( trackingPlayer === false && cameraLocked === false ) {
+            camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
+            state.camera.lookAt(0, 4, 40)
         }
     })
 
@@ -86,6 +99,8 @@ export default function Experience()
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
+
+        <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 1000 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } />
 
             <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } >
                 <Lights />

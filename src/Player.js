@@ -154,7 +154,7 @@ export default function Player(currentAnimation)
 
             <Suspense fallback={ null } >
 
-                <Ecctrl ref={ player } floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 60 } >
+                <Ecctrl ref={ player } camCollision={ false } camLerpMult={ 1000 } floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } camMinDis={ -0.01 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 60 } >
                     <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
                 </Ecctrl>
 
