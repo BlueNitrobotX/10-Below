@@ -28,7 +28,10 @@ const root = ReactDOM.createRoot(document.querySelector('#root'))
 root.render( <>
     <KeyboardControls map={keyboardMap}>
 
-            <Canvas shadows >
+            <Canvas 
+            shadows
+            // onPointerDown={(e) => { if (e.pointerType === "mouse") {e.target.requestPointerLock() } } }
+            >
                 <IntroScene />
                 <Experience />  
             </Canvas>

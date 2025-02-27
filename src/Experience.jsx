@@ -1,4 +1,4 @@
-import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html } from '@react-three/drei'
+import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html, CameraControls } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
 import { Physics } from '@react-three/rapier'
@@ -25,21 +25,20 @@ export default function Experience()
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
     // const player = useRef()
-    const { camera } = useThree()
+    const { camera, mouse } = useThree()
 
-
-    const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
-    const [ pauseState, setPauseState ] = useState(true)
-    const [ trackingPlayer, setTrackingPlayer ] = useState(false)
-    const [ cameraLocked, setCameraLocked ] = useState(true)
-
-    useEffect(() => {
         window.appData = {
             playerX: 0,
             playerY: 60,
             playerZ: 0
         }
-    }, [])
+
+    const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
+    const [ pauseState, setPauseState ] = useState(true)
+    const [ trackingPlayer, setTrackingPlayer ] = useState(false)
+    const [ cameraLocked, setCameraLocked ] = useState(true)
+    const [ isOrbitControls, setOrbitControls ] = useState(false)
+    const [ orbitTarget, setOrbitTarget ] = useState( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
 
     // Custom animation manager/cutscene manager
     useEffect(() => {
@@ -58,10 +57,13 @@ export default function Experience()
             
             const wait = setTimeout(() => {
                 setCurrentAnimation('Idle')
-                setTrackingPlayer(false)
+
                 
                 const wait2 = setTimeout(() => {
+                    setTrackingPlayer(false)
                     setCameraLocked(false)
+                    setOrbitControls(true)
+                    camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
                 }, 1000)
 
             }, 4250)
@@ -76,8 +78,7 @@ export default function Experience()
             state.camera.lookAt(cameraTarget)
             // console.log(state.camera)
         } else if( trackingPlayer === false && cameraLocked === false ) {
-            camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
-            state.camera.lookAt(0, 4, 40)
+            setOrbitTarget( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
         }
     })
 
@@ -93,8 +94,15 @@ export default function Experience()
 
 
     return <>
-        
-        {/* <OrbitControls makeDefault={ true } /> */}
+
+        <CameraControls makeDefault={ !isOrbitControls } />
+
+        <OrbitControls 
+        makeDefault={ isOrbitControls } 
+        target={ orbitTarget }
+        panSpeed={ 0 }
+        zoomSpeed={ 0 } 
+        />
 
         <color args={ [ '#1f2b40' ] } attach="background" />
 
