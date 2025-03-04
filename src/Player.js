@@ -11,7 +11,7 @@ import { useControls } from "leva"
 import Ecctrl from 'ecctrl'
 import { create } from 'zustand'
 
-export default function Player(currentAnimation)
+export default function Player(currentAnimation, isGameplayCamera )
 {
     // const body = useRef()
     // const { rapier, world } = useRapier()
@@ -154,7 +154,25 @@ export default function Player(currentAnimation)
 
             <Suspense fallback={ null } >
 
-                <Ecctrl ref={ player } camCollision={ false } camLerpMult={ 1000 } floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } camMinDis={ -0.01 } disableFollowCam={ true } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" position-y={ 60 } >
+                <Ecctrl 
+                    ref={ player } 
+                    camCollision={false} 
+                    camCollisionSpeedMult={ 1 }
+                    camInitDis={-0.01}
+                    camInitDir={ { x: 0.2, y: 0 } }
+                    camMinDis={-0.01} 
+                    camFollowMult={1000}
+                    camLerpMult={1000} 
+                    turnVelMultiplier={1}
+                    turnSpeed={100} 
+                    disableFollowCam={ isGameplayCamera }
+                    disableFollowCamTarget={ window.appData.playerPosition } 
+                    autoBalance={ false }
+                    // autoBalanceDampingC={ 0.000001 }
+                    // autoBalanceDampingOnY={ 0.000001 }
+                    mode="CameraBasedMovement" 
+                    position-y={ 60 } 
+                >
                     <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
                 </Ecctrl>
 

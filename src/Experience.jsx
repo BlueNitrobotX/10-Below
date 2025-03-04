@@ -37,7 +37,7 @@ export default function Experience()
     const [ pauseState, setPauseState ] = useState(true)
     const [ trackingPlayer, setTrackingPlayer ] = useState(false)
     const [ cameraLocked, setCameraLocked ] = useState(true)
-    const [ isOrbitControls, setOrbitControls ] = useState(false)
+    const [ isGameplayCamera, setCurrentCamera ] = useState(false)
     const [ orbitTarget, setOrbitTarget ] = useState( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
 
     // Custom animation manager/cutscene manager
@@ -62,8 +62,9 @@ export default function Experience()
                 const wait2 = setTimeout(() => {
                     setTrackingPlayer(false)
                     setCameraLocked(false)
-                    setOrbitControls(true)
+                    setCurrentCamera(true)
                     camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
+                    camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
                 }, 1000)
 
             }, 4250)
@@ -76,10 +77,16 @@ export default function Experience()
         if( trackingPlayer === true ) {
             const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
             state.camera.lookAt(cameraTarget)
-            // console.log(state.camera)
-        } else if( trackingPlayer === false && cameraLocked === false ) {
-            setOrbitTarget( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
-        }
+        } 
+        // else if( trackingPlayer === false && cameraLocked === false ) {
+        //     setOrbitTarget( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
+        //     state.camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
+        //     state.camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z)
+        // }
+    })
+
+    useFrame(() => {
+        console.log(window.appData.playerPosition)
     })
 
     /**
@@ -95,20 +102,28 @@ export default function Experience()
 
     return <>
 
-        <CameraControls makeDefault={ !isOrbitControls } />
+        {/* <CameraControls makeDefault={ !isGameplayCamera } enabled={ !isGameplayCamera } /> */}
 
-        <OrbitControls 
+        {/* <OrbitControls 
         makeDefault={ isOrbitControls } 
         target={ orbitTarget }
-        panSpeed={ 0 }
-        zoomSpeed={ 0 } 
-        />
+        enablePan={ false }
+        enableZoom={ false }
+        enabled={ isOrbitControls }
+        /> */}
 
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
 
-        <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 1000 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } />
+
+        {/* Camera 1: (For intro sequence) */}
+
+        { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> }
+
+        {/* Camera 2: (For gameplay) */}
+
+        {/* <PerspectiveCamera makeDefault={ isOrbitControls } fov={ 70 } near={ 0.05 } far={ 1000 } position={ orbitTarget } /> */}
 
             <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } >
                 <Lights />
@@ -117,7 +132,7 @@ export default function Experience()
                     <Level shadows />
 
                         {/* <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" > */}
-                                <Player currentAnimation={ currentAnimation } />
+                                <Player isGameplayCamera={ isGameplayCamera } currentAnimation={ currentAnimation } />
                         {/* </Ecctrl> */}
                 {/* </Stage> */}
             </Physics>
