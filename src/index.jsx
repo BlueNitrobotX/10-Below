@@ -4,7 +4,6 @@ import { Canvas } from '@react-three/fiber'
 import Experience from './Experience.jsx'
 import { KeyboardControls, PerspectiveCamera, useKeyboardControls } from "@react-three/drei"
 import Menu from './Menu.jsx'
-import IntroScene from './IntroScene.jsx'
 import * as THREE from 'three'
 import { useRef, useState } from 'react'
 import { create } from 'zustand'
@@ -32,7 +31,6 @@ root.render( <>
             shadows
             // onPointerDown={(e) => { if (e.pointerType === "mouse") {e.target.requestPointerLock() } } }
             >
-                <IntroScene />
                 <Experience />  
             </Canvas>
         

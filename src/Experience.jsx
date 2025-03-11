@@ -5,7 +5,6 @@ import { Physics } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
 import Ecctrl from "ecctrl"
 import Player from './Player.js'
-import IntroScene from './IntroScene.jsx'
 import useGame from './stores/useGame.js'
 import { useMemo, useState, useRef, useEffect } from 'react'
 import { useFrame, useThree, extend } from '@react-three/fiber'
@@ -25,7 +24,11 @@ export default function Experience()
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
     // const player = useRef()
-    const { camera, mouse } = useThree()
+    // const { camera, set } = useThree()
+    // const camera = useEffect((state) => {
+    //     const abadaba = state.camera
+    //     return abadaba
+    // })
 
         window.appData = {
             playerX: 0,
@@ -41,53 +44,47 @@ export default function Experience()
     const [ orbitTarget, setOrbitTarget ] = useState( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
 
     // Custom animation manager/cutscene manager
-    useEffect(() => {
+    useMemo((state) => {
 
         setCameraLocked(false)
         function unPausePhysics() {
             setPauseState(false)
         }
 
-        camera.position.set(-3, -3, 10)
+        console.log(state)
+        // camera.position.set(-3, -3, 10)
 
         // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
-            setTrackingPlayer(true)
+            // setTrackingPlayer(true)
             
             const wait = setTimeout(() => {
                 setCurrentAnimation('Idle')
 
                 
-                const wait2 = setTimeout(() => {
-                    setTrackingPlayer(false)
-                    setCameraLocked(false)
-                    setCurrentCamera(true)
-                    camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
-                    camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
-                }, 1000)
+            //     const wait2 = setTimeout(() => {
+            //         setTrackingPlayer(false)
+            //         setCameraLocked(false)
+            //         setCurrentCamera(true)
+            //         camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
+            //         camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
+            //     }, 1000)
 
             }, 4250)
 
         })
 
-    }, [ pauseState ])
+    }, [])
 
-    useFrame((state) => {
-        if( trackingPlayer === true ) {
-            const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
-            state.camera.lookAt(cameraTarget)
-        } 
-        // else if( trackingPlayer === false && cameraLocked === false ) {
-        //     setOrbitTarget( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
-        //     state.camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
-        //     state.camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z)
-        // }
-    })
+    // useFrame((state) => {
+    //     if( trackingPlayer === true ) {
+    //         const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
+    //         state.camera.lookAt(cameraTarget)
+    //     } 
+    // })
 
-    useFrame(() => {
-        console.log(window.appData.playerPosition)
-    })
+
 
     /**
     * Current animations list:
@@ -102,8 +99,6 @@ export default function Experience()
 
     return <>
 
-        {/* <CameraControls makeDefault={ !isGameplayCamera } enabled={ !isGameplayCamera } /> */}
-
         {/* <OrbitControls 
         makeDefault={ isOrbitControls } 
         target={ orbitTarget }
@@ -112,20 +107,22 @@ export default function Experience()
         enabled={ isOrbitControls }
         /> */}
 
+        <OrbitControls makeDefault target={ [ 0, -10, 0 ] } />
+
         <color args={ [ '#1f2b40' ] } attach="background" />
 
         {/* <Perf /> */}
 
 
+        {/* Camera 2: (For ecctrl) */}
+
+        {/* <PerspectiveCamera makeDefault={ isGameplayCamera } fov={ 70 } near={ 0.05 } far={ 1000 } /> */}
+
         {/* Camera 1: (For intro sequence) */}
 
-        { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> }
+        {/* { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> } */}
 
-        {/* Camera 2: (For gameplay) */}
-
-        {/* <PerspectiveCamera makeDefault={ isOrbitControls } fov={ 70 } near={ 0.05 } far={ 1000 } position={ orbitTarget } /> */}
-
-            <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } >
+            <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
