@@ -1,7 +1,7 @@
 import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html, CameraControls } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
-import { Physics } from '@react-three/rapier'
+import { Physics, useRapier } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
 import Ecctrl from "ecctrl"
 import Player from './Player.js'
@@ -11,14 +11,14 @@ import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
 import * as THREE from 'three'
-import { PerspectiveCamera } from '@react-three/drei'
+import animationManager from './AnimationManager.jsx'
+extend({ animationManager })
 
 export default function Experience()
 {
 
     const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
-
 
     const { scene } = useThree()
     // scene.fog = new FogExp2("#ffffff", 0.008)
@@ -86,26 +86,17 @@ export default function Experience()
 
 
 
-    /**
-    * Current animations list:
-    * 'Falling' 
-    * 'Gangnam Style'
-    * 'Idle' 
-    * 'Jumping' 
-    * 'Running' 
-    * 'Walking'
-    */
+
+
+
+
+
+
+
+
 
 
     return <>
-
-        {/* <OrbitControls 
-        makeDefault={ isOrbitControls } 
-        target={ orbitTarget }
-        enablePan={ false }
-        enableZoom={ false }
-        enabled={ isOrbitControls }
-        /> */}
 
         <OrbitControls makeDefault target={ [ 0, -10, 0 ] } />
 
@@ -122,15 +113,14 @@ export default function Experience()
 
         {/* { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> } */}
 
-            <Physics debug={ false } key={ 1 } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
+            <Physics debug={ false } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
                     <Level shadows />
-
-                        {/* <Ecctrl floatHeight={ 0.14 } camZoomSpeed={ 0 } camInitDis={ -3 } disableFollowCam={ false } turnVelMultiplier={ 1 } turnSpeed={ 100 } mode="CameraBasedMovement" > */}
+                            <animationManager playerRef={ player } >
                                 <Player isGameplayCamera={ isGameplayCamera } currentAnimation={ currentAnimation } />
-                        {/* </Ecctrl> */}
+                            </animationManager>
                 {/* </Stage> */}
             </Physics>
         

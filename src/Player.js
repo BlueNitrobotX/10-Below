@@ -8,7 +8,7 @@ import useGame from "./stores/useGame"
 import PlayerModel from "./PlayerModel"
 import { GLTFLoader } from "three/examples/jsm/Addons.js"
 import { useControls } from "leva"
-import Ecctrl from 'ecctrl'
+import Ecctrl, { EcctrlAnimation } from 'ecctrl'
 import { create } from 'zustand'
 
 export default function Player(currentAnimation, isGameplayCamera )
@@ -39,12 +39,6 @@ export default function Player(currentAnimation, isGameplayCamera )
     //     }
     // }
 
-    // useFrame((state, delta) => {
-
-    //     const cameraPosition = new THREE.Vector3()
-
-    // })
-
     const player = useRef()
 
     const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
@@ -53,26 +47,6 @@ export default function Player(currentAnimation, isGameplayCamera )
 
     const playerAnimations = useAnimations(playerModel.animations, playerModel.scene)
 
-    // const { animationName } = useControls({
-    //     animationName: { options: playerAnimations.names, value: "Idle" }
-    // })
-
-    // useEffect(() => 
-    // {
-        
-    //     const action = playerAnimations.actions[animationName]
-    //     action
-    //         .reset()
-    //         .fadeIn(0.5)
-    //         .play()
-            
-    //     return () => 
-    //     {
-    //         action.fadeOut(0.5)
-    //     }
-
-    // }, [ animationName ])
-
 
     const actionIdle = playerAnimations.actions.Idle
     const actionFalling = playerAnimations.actions.Falling
@@ -80,7 +54,15 @@ export default function Player(currentAnimation, isGameplayCamera )
     const actionJumping = playerAnimations.actions.Jumping
     const actionRunning = playerAnimations.actions.Running
     const actionWalking = playerAnimations.actions.Walking
+    const actionJumpingUp = playerAnimations.actions.Jumping_Up
+    const actionJumpingDown = playerAnimations.actions.Jumping_Down
+    const actionFallingIdle = playerAnimations.actions.Falling_Idle
 
+    useFrame(() => {
+        if( phase === 'playing') {
+            window.appData.playerPosition = player.current.translation()
+        }
+    })
 
     function getAction(x) {
 
@@ -90,11 +72,20 @@ export default function Player(currentAnimation, isGameplayCamera )
         else if(x === 'Falling') {
             return actionFalling
         }
+        else if(x === 'Falling Idle') {
+            return actionFallingIdle
+        }        
         else if(x === 'Gangnam Style') {
             return actionGangnamStyle
         }
         else if(x === 'Jumping') {
             return actionJumping
+        }
+        else if(x === 'Jumping Up') {
+            return actionJumpingUp
+        }
+        else if(x === 'Jumping Down') {
+            return actionJumpingDown
         }
         else if(x === 'Running') {
             return actionRunning
@@ -127,11 +118,18 @@ export default function Player(currentAnimation, isGameplayCamera )
 
     }, [ currentAnimation ])
 
-    useFrame(() => {
-        if( phase === 'playing') {
-            window.appData.playerPosition = player.current.translation()
-        }
-    })
+
+
+    // const animationSet = {
+    //     idle: "Idle",
+    //     walk: "Walking",
+    //     run: "run",
+    //     jumping: "Jumping"
+    //     jump: "Jumping Up",
+    //     jumpIdle: "Falling Idle",
+    //     jumpLand: "Jumping Down",
+    //     fall: "Falling"
+    // }
 
     /**
     * Current animations list:
@@ -141,6 +139,9 @@ export default function Player(currentAnimation, isGameplayCamera )
     * 'Jumping' 
     * 'Running' 
     * 'Walking'
+    * 'Falling Idle'
+    * 'Jumping Up'
+    * 'Jumping Down'
     */
 
     
