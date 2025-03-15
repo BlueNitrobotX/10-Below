@@ -11,10 +11,9 @@ import { useControls } from "leva"
 import Ecctrl, { EcctrlAnimation } from 'ecctrl'
 import { create } from 'zustand'
 
-export default function Player(currentAnimation, isGameplayCamera )
+export default function Player(props)
 {
-    // const body = useRef()
-    // const { rapier, world } = useRapier()
+    const { rapier, world } = useRapier()
 
     // const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
     // const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
@@ -23,6 +22,8 @@ export default function Player(currentAnimation, isGameplayCamera )
     const end = useGame((state) => state.end)
     const restart = useGame((state) => state.restart)
     const phase = useGame((state) => state.phase)
+
+    const { currentAnimation } = props.props
 
     const reset = () =>
     {
@@ -64,6 +65,22 @@ export default function Player(currentAnimation, isGameplayCamera )
         }
     })
 
+    // useFrame(() => {
+
+    //     if( phase === 'playing' ) {
+    //         const { x, y, z } = player.current.translation()
+    //         const origin = { x: x, y: y, z: z }
+    //         const direction = { x: 0, y: -10000, z: 0 }
+    //         const ray = new rapier.Ray(origin, direction)
+    //         const hit = world.castRay(ray, 10, true)
+    //         // console.log(hit)
+    //         // console.log(player.current.translation())
+    //         // const toi = hit.timeOfImpact
+    //         // window.appData.heightRayTOI = toi
+    //     }
+
+    // })
+
     function getAction(x) {
 
         if(x === 'Idle') {
@@ -94,7 +111,7 @@ export default function Player(currentAnimation, isGameplayCamera )
             actionWalking
         } else
 
-        console.log('[CUSTOM ERROR] prop currentAnimation not recognized by getAction function')
+        console.warn('[CUSTOM ERROR] argument x passed in getAction(x) is not recognized')
         return null
 
     }
@@ -102,7 +119,8 @@ export default function Player(currentAnimation, isGameplayCamera )
     useEffect(() => 
     {
 
-        const action = getAction(currentAnimation.currentAnimation)
+        const action = getAction(currentAnimation)
+        console.log(action)
 
         action
             .reset()
