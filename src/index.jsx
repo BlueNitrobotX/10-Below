@@ -13,6 +13,7 @@ const keyboardMap = [
     { name: "backward", keys: ["ArrowDown", "KeyS"] },
     { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
     { name: "rightward", keys: ["ArrowRight", "KeyD"] },
+    { name: "easterEgg", keys:["keyG"] },
     { name: "jump", keys: ["Space"] },
     { name: "run", keys: ["Shift"] },
     // Optional animation key map

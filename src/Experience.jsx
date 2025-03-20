@@ -11,9 +11,7 @@ import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
 import * as THREE from 'three'
-import animationManager from './AnimationManager.jsx'
 import { log } from 'three/tsl'
-extend({ animationManager })
 
 export default function Experience()
 {
@@ -48,14 +46,14 @@ export default function Experience()
     /**
     * Current animations list:
     * 'Falling' 
-    * 'Gangnam Style'
+    * 'Gangnam_Style'
     * 'Idle' 
     * 'Jumping' 
     * 'Running' 
     * 'Walking'
-    * 'Falling Idle'
-    * 'Jumping Up'
-    * 'Jumping Down'
+    * 'Falling Idle' doesn't work
+    * 'Jumping Up' doesn't work
+    * 'Jumping Down' doesn't work
     */
 
     useFrame(() => {
@@ -101,7 +99,6 @@ export default function Experience()
             setPauseState(false)
         }
 
-        console.log(state)
         // camera.position.set(-3, -3, 10)
 
         // Intro Cutscene
@@ -110,7 +107,7 @@ export default function Experience()
             // setTrackingPlayer(true)
             
             const wait = setTimeout(() => {
-                setCurrentAnimation('Idle')
+                setCurrentAnimation('Running')
                 setIsIntroDone(true)
                 
             //     const wait2 = setTimeout(() => {

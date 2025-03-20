@@ -55,9 +55,11 @@ export default function Player(props)
     const actionJumping = playerAnimations.actions.Jumping
     const actionRunning = playerAnimations.actions.Running
     const actionWalking = playerAnimations.actions.Walking
-    const actionJumpingUp = playerAnimations.actions.Jumping_Up
-    const actionJumpingDown = playerAnimations.actions.Jumping_Down
-    const actionFallingIdle = playerAnimations.actions.Falling_Idle
+    // const actionJumpingUp = playerAnimations.actions.Jumping_Up
+    // const actionJumpingDown = playerAnimations.actions.Jumping_Down
+    // const actionFallingIdle = playerAnimations.actions.Falling_Idle
+
+    console.log(playerAnimations.actions.Idle)
 
     useFrame(() => {
         if( phase === 'playing') {
@@ -89,21 +91,21 @@ export default function Player(props)
         else if(x === 'Falling') {
             return actionFalling
         }
-        else if(x === 'Falling Idle') {
-            return actionFallingIdle
-        }        
+        // else if(x === 'Falling Idle') {
+        //     return actionFallingIdle
+        // }        
         else if(x === 'Gangnam Style') {
             return actionGangnamStyle
         }
         else if(x === 'Jumping') {
             return actionJumping
         }
-        else if(x === 'Jumping Up') {
-            return actionJumpingUp
-        }
-        else if(x === 'Jumping Down') {
-            return actionJumpingDown
-        }
+        // else if(x === 'Jumping Up') {
+        //     return actionJumpingUp
+        // }
+        // else if(x === 'Jumping Down') {
+        //     return actionJumpingDown
+        // }
         else if(x === 'Running') {
             return actionRunning
         }
@@ -119,8 +121,9 @@ export default function Player(props)
     useEffect(() => 
     {
 
-        const action = getAction(currentAnimation)
-        console.log(action)
+        // const action = getAction(currentAnimation)
+        const action = playerAnimations.actions[currentAnimation]
+        // console.log(action)
 
         action
             .reset()
