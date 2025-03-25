@@ -14,6 +14,7 @@ import { create } from 'zustand'
 export default function Player(props)
 {
     const { rapier, world } = useRapier()
+    const { currentAnimation } = props.props
 
     // const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
     // const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
@@ -22,15 +23,20 @@ export default function Player(props)
     const end = useGame((state) => state.end)
     const restart = useGame((state) => state.restart)
     const phase = useGame((state) => state.phase)
-
-    const { currentAnimation } = props.props
+    const die = useGame((state) => state.die)
 
     const reset = () =>
     {
-        // body.current.setTranslation({ x: 0, y: 1, z: 0 })
-        // body.current.setLinvel({ x: 0, y: 0, z: 0 })
-        // body.current.setAngvel({ x: 0, y: 0, z: 0 })
+        player.current.setTranslation({ x: 0, y: 1, z: 0 })
+        player.current.setLinvel({ x: 0, y: 0, z: 0 })
+        player.current.setAngvel({ x: 0, y: 0, z: 0 })
     }
+
+    useEffect(() => {
+        if( phase === 'ended') {
+            reset()
+        }
+    })
 
     // function pauseGame() {
     //     if(window.pauseState) {
@@ -59,7 +65,8 @@ export default function Player(props)
     // const actionJumpingDown = playerAnimations.actions.Jumping_Down
     // const actionFallingIdle = playerAnimations.actions.Falling_Idle
 
-    console.log(playerAnimations.actions.Idle)
+
+    // console.log(playerAnimations.actions['Falling'])
 
     useFrame(() => {
         if( phase === 'playing') {
@@ -123,7 +130,6 @@ export default function Player(props)
 
         // const action = getAction(currentAnimation)
         const action = playerAnimations.actions[currentAnimation]
-        // console.log(action)
 
         action
             .reset()

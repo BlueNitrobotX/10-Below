@@ -11,7 +11,6 @@ import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
 import * as THREE from 'three'
-import { log } from 'three/tsl'
 
 export default function Experience()
 {
@@ -20,6 +19,7 @@ export default function Experience()
     const playerModel = useGLTF("./animatedModel4.glb")
     const { scene } = useThree()
     const [ subscribeKeys, getKeys ] = useKeyboardControls()
+    const die = useGame((state) => state.die)
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
 
@@ -72,6 +72,10 @@ export default function Experience()
                 setCurrentAnimation('Idle')
             }
 
+        }
+
+        if(keys.action1) {
+            die()
         }
 
     })
@@ -164,10 +168,8 @@ export default function Experience()
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
-                    <Level shadows />
-                            {/* <animationManager playerRef={ player } > */}
-                                <Player props={ { isGameplayCamera: isGameplayCamera, currentAnimation: currentAnimation } } />
-                            {/* </animationManager> */}
+                        <Level shadows />
+                        <Player props={ { isGameplayCamera: isGameplayCamera, currentAnimation: currentAnimation } } />
                 {/* </Stage> */}
             </Physics>
         

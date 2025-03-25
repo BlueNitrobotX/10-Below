@@ -20,7 +20,6 @@ const keyboardMap = [
     { name: "action1", keys: ["1"] },
     { name: "action2", keys: ["2"] },
     { name: "action3", keys: ["3"] },
-    { name: "pause", keys: ["KeyP"] },
   ]
 
 const root = ReactDOM.createRoot(document.querySelector('#root'))
