@@ -8,9 +8,8 @@ export default create(subscribeWithSelector((set) =>
     {
         return {
 
-            curAnimation: null,
-            animationSet: {},
             phase: 'menu',
+            musicEnabled: true,
     
             //Start the game
             start: () => 
@@ -69,39 +68,22 @@ export default create(subscribeWithSelector((set) =>
                         return {}
                     })
                 },
+                 
+            toggleMusicTrue: () =>
+            {
+                set((state) => 
+                {
+                    return { musicEnabled: true }
+                })
+            },
 
-            idle: () => 
+            toggleMusicFalse: () =>
                 {
                     set((state) => 
-                    { 
-                        if(state.curAnimation != state.animationSet.idle)
-                        return { curAnimation: state.animationSet.idle } 
-        
-                        return {}
+                    {
+                        return { musicEnabled: false }
                     })
-                },
-
-            run: () => 
-                {
-                    set((state) => 
-                    { 
-                        if(state.curAnimation != state.animationSet.run)
-                        return { curAnimation: state.animationSet.run } 
-            
-                        return {}
-                    })
-                },
-    
-            jump: () => 
-                {
-                    set((state) => 
-                    { 
-                        if(state.curAnimation != state.animationSet.run)
-                        return { curAnimation: state.animationSet.run } 
-            
-                        return {}
-                    })
-                 },
+                }
 
         }
     }))

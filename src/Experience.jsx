@@ -24,13 +24,14 @@ export default function Experience()
         audio.volume = 0.03
         return audio
     }
-) //GET OUT (sound effect).mp3
+)
 
     const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
     const { scene } = useThree()
     const [ subscribeKeys, getKeys ] = useKeyboardControls()
     const die = useGame((state) => state.die)
+    const musicEnabled = useGame((state) => state.musicEnabled)
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
 
@@ -52,8 +53,6 @@ export default function Experience()
 
     const phase = useGame((state) => state.phase)
     
-
-
     /**
     * Current animations list:
     * 'Falling' 
@@ -69,12 +68,6 @@ export default function Experience()
 
         // Background music loop
 
-    function playMusic() {
-        // backgroundMusic.volume = 0.5
-        // backgroundMusic.currentTime = 0
-        backgroundMusic.play()
-    }
-
     // useFrame(() => {
     //     if(backgroundMusic.ended) {
     //         const wait = setTimeout(() => {
@@ -88,7 +81,7 @@ export default function Experience()
 
 
     useFrame(() => {
-        
+
         const keys = getKeys()
 
         if(isIntroDone) {
@@ -105,9 +98,9 @@ export default function Experience()
 
         }
 
-        if(keys.action1) {
-            die()
-        }
+        // if(keys.action1) {
+        //     die()
+        // }
 
     })
 
@@ -139,11 +132,11 @@ export default function Experience()
         // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
-            playMusic()
+                playMusic()
             // setTrackingPlayer(true)
             
             const wait = setTimeout(() => {
-                setCurrentAnimation('Running')
+                setCurrentAnimation('Idle')
                 setIsIntroDone(true)
                 
             //     const wait2 = setTimeout(() => {
@@ -169,8 +162,17 @@ export default function Experience()
 
 
 
+    function playMusic() {
+        // backgroundMusic.volume = 0.5
+        // backgroundMusic.currentTime = 0
 
 
+        
+        if(musicEnabled) {
+            backgroundMusic.play()
+            console.log('Playing Music')
+        }
+    }
 
     return <>
 

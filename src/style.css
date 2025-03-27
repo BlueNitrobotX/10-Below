@@ -207,11 +207,81 @@ body,
 {
     color: white;
     position: absolute;
+    text-align: center;
+    vertical-align: middle;
     font-family: 'Bebas Neue', cursive;
-    font-size: 5vh;
+    font-size: 7vh;
     top: 50%;
-    left: 50%;
+    left: 40%;
     
+}
+
+.settingsToggleMuteUnchecked
+{
+    background: #161616a6;
+    color: #16161600;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    top: 51%;
+    left: 57%;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    width: 60px;
+    height: 60px;
+    font-size: 6vh;
+}
+
+.settingsToggleMuteUnchecked:hover
+{
+    background: #333333a6;
+    color: #16161600;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    top: 51%;
+    left: 57%;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    width: 60px;
+    height: 60px;
+    font-size: 6vh;
+}
+
+.settingsToggleMuteChecked
+{
+    background: #161616a6;
+    color: #ffffff;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    top: 51%;
+    left: 57%;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    width: 60px;
+    height: 60px;
+    font-size: 6vh;
+}
+
+.settingsToggleMuteChecked:hover
+{
+    background: #333333a6;
+    color: #ffffff;
+    position: absolute;
+    text-align: center;
+    vertical-align: middle;
+    top: 51%;
+    left: 57%;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    width: 60px;
+    height: 60px;
+    font-size: 6vh;
 }
 
 .creditsText

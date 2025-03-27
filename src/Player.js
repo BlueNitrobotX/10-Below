@@ -54,7 +54,6 @@ export default function Player(props)
 
     const playerAnimations = useAnimations(playerModel.animations, playerModel.scene)
 
-
     const actionIdle = playerAnimations.actions.Idle
     const actionFalling = playerAnimations.actions.Falling
     const actionGangnamStyle = playerAnimations.actions.Gangnam_Style
@@ -101,7 +100,7 @@ export default function Player(props)
         // else if(x === 'Falling Idle') {
         //     return actionFallingIdle
         // }        
-        else if(x === 'Gangnam Style') {
+        else if(x === 'Gangnam_Style') {
             return actionGangnamStyle
         }
         else if(x === 'Jumping') {
@@ -128,8 +127,8 @@ export default function Player(props)
     useEffect(() => 
     {
 
-        // const action = getAction(currentAnimation)
-        const action = playerAnimations.actions[currentAnimation]
+        const action = getAction(currentAnimation)
+        // const action = playerAnimations.actions[currentAnimation]
 
         action
             .reset()
@@ -144,8 +143,6 @@ export default function Player(props)
         }
 
     }, [ currentAnimation ])
-
-
 
     // const animationSet = {
     //     idle: "Idle",

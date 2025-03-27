@@ -11,6 +11,9 @@ export default function() {
     const menu = useGame((state) => state.menu)
     const settings = useGame((state) => state.settings)
     const credits = useGame((state) => state.credits)
+    const musicEnabled = useGame((state) => state.musicEnabled)
+    const toggleMusicTrue = useGame((state) => state.toggleMusicTrue)
+    const toggleMusicFalse = useGame((state) => state.toggleMusicFalse)
 
     let menuState = 'menu'
 
@@ -45,6 +48,16 @@ export default function() {
 
     }
 
+    function nowToggleMusicTrue() {
+        toggleMusicTrue()
+        console.log(musicEnabled)
+    }
+
+    function nowToggleMusicFalse() {
+        toggleMusicFalse()
+        console.log(musicEnabled)
+    }
+
     const [ isVisible, setIsVisible ] = useState(true)
 
     useEffect(() => {
@@ -63,6 +76,9 @@ export default function() {
 
     return <>
 
+
+        {/* Main Menu */}
+
         { phase != 'playing' && <div className="menuBackground" ></div> }
     
         { phase === 'menu' && <div className="menuTitle" >10 Below</div> }
@@ -73,14 +89,26 @@ export default function() {
         
         { phase === 'menu' && <div className="menuCredits" onClick={ nowCredits } >Credits</div> }
 
-        { phase === 'settings' && <div className="settingsText" >settings placeholder</div> }
 
-        { phase === 'credits' && <div className="creditsText" >credits placeholder</div> }
+        {/* Settings */}
+
+        { phase === 'settings' && <div className="settingsText" >Music On:</div> }
+
+        { phase === 'settings' && musicEnabled === false && <div className="settingsToggleMuteUnchecked" onClick={ nowToggleMusicTrue } >X</div> }
+        { phase === 'settings' && musicEnabled === true && <div className="settingsToggleMuteChecked" onClick={ nowToggleMusicFalse } >X</div> }
 
         { phase === 'settings' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
 
+
+        {/* Credits */}
+
+        { phase === 'credits' && <div className="creditsText" >credits placeholder</div> }
+
         { phase === 'credits' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
         
+
+        {/* Loading Screen */}
+
         { isVisible === true && <div className="menuFallback" > Loading... </div>}
 
     </>
