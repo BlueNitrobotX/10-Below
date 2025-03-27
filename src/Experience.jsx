@@ -15,6 +15,17 @@ import * as THREE from 'three'
 export default function Experience()
 {
 
+    const [ backgroundMusic ] = useState(() => 
+    {
+        const audio = new Audio('./Beautiful piano.mp3')
+        audio.currentTime = 0
+        audio.preload = 'auto'
+        audio.loop = true        
+        audio.volume = 0.03
+        return audio
+    }
+) //GET OUT (sound effect).mp3
+
     const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
     const { scene } = useThree()
@@ -55,6 +66,26 @@ export default function Experience()
     * 'Jumping Up' doesn't work
     * 'Jumping Down' doesn't work
     */
+
+        // Background music loop
+
+    function playMusic() {
+        // backgroundMusic.volume = 0.5
+        // backgroundMusic.currentTime = 0
+        backgroundMusic.play()
+    }
+
+    // useFrame(() => {
+    //     if(backgroundMusic.ended) {
+    //         const wait = setTimeout(() => {
+    //             playMusic()
+    //         }, 1000)
+    //     }
+    // })
+
+
+
+
 
     useFrame(() => {
         
@@ -108,6 +139,7 @@ export default function Experience()
         // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
+            playMusic()
             // setTrackingPlayer(true)
             
             const wait = setTimeout(() => {
@@ -134,13 +166,6 @@ export default function Experience()
     //         state.camera.lookAt(cameraTarget)
     //     } 
     // })
-
-
-
-
-
-
-
 
 
 
