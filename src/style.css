@@ -213,6 +213,7 @@ body,
     font-size: 7vh;
     top: 50%;
     left: 40%;
+    user-select: none;
     
 }
 

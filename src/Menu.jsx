@@ -14,6 +14,7 @@ export default function() {
     const musicEnabled = useGame((state) => state.musicEnabled)
     const toggleMusicTrue = useGame((state) => state.toggleMusicTrue)
     const toggleMusicFalse = useGame((state) => state.toggleMusicFalse)
+    const toggleMusic = useGame((state) => state.toggleMusic)
 
     let menuState = 'menu'
 
@@ -50,13 +51,19 @@ export default function() {
 
     function nowToggleMusicTrue() {
         toggleMusicTrue()
-        console.log(musicEnabled)
+        // console.log(musicEnabled)
     }
 
     function nowToggleMusicFalse() {
         toggleMusicFalse()
-        console.log(musicEnabled)
+        // console.log(musicEnabled)
     }
+
+    function nowToggleMusic() {
+        toggleMusic()
+        // console.log(musicEnabled)
+    }
+
 
     const [ isVisible, setIsVisible ] = useState(true)
 
@@ -69,7 +76,6 @@ export default function() {
         return () => clearTimeout(wait)
 
     }, [isVisible])
-
 
 
     // menu, settings, credits, hidden
@@ -94,8 +100,8 @@ export default function() {
 
         { phase === 'settings' && <div className="settingsText" >Music On:</div> }
 
-        { phase === 'settings' && musicEnabled === false && <div className="settingsToggleMuteUnchecked" onClick={ nowToggleMusicTrue } >X</div> }
-        { phase === 'settings' && musicEnabled === true && <div className="settingsToggleMuteChecked" onClick={ nowToggleMusicFalse } >X</div> }
+        { phase === 'settings' && musicEnabled === false && <div className="settingsToggleMuteUnchecked" onClick={ nowToggleMusic } >X</div> }
+        { phase === 'settings' && musicEnabled === true && <div className="settingsToggleMuteChecked" onClick={ nowToggleMusic } >X</div> }
 
         { phase === 'settings' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
 

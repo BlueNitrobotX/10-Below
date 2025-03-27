@@ -21,7 +21,7 @@ export default function Experience()
         audio.currentTime = 0
         audio.preload = 'auto'
         audio.loop = true        
-        audio.volume = 0.03
+        audio.volume = 0.1
         return audio
     }
 )
@@ -30,6 +30,7 @@ export default function Experience()
     const playerModel = useGLTF("./animatedModel4.glb")
     const { scene } = useThree()
     const [ subscribeKeys, getKeys ] = useKeyboardControls()
+    const phase = useGame((state) => state.phase)
     const die = useGame((state) => state.die)
     const musicEnabled = useGame((state) => state.musicEnabled)
     // scene.fog = new FogExp2("#ffffff", 0.008)
@@ -51,7 +52,7 @@ export default function Experience()
     const [ orbitTarget, setOrbitTarget ] = useState( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
     const [ isIntroDone, setIsIntroDone ] = useState(false)
 
-    const phase = useGame((state) => state.phase)
+    let musicOn = true
     
     /**
     * Current animations list:
@@ -77,6 +78,24 @@ export default function Experience()
     // })
 
 
+    useEffect(() => {
+
+        useGame.subscribe(
+            (state) => state.musicEnabled,
+            (value) => {
+                console.log('Music Enabled?', value)
+                musicOn = !musicOn
+            }
+        )
+
+    }, [])
+
+    function playMusic() {
+        if(musicOn) {
+            backgroundMusic.play()
+            console.log('Playing Music')
+        }
+    }
 
 
 
@@ -120,7 +139,7 @@ export default function Experience()
  */
 
     // Custom animation manager/cutscene manager
-    useMemo((state) => {
+    useEffect((state) => {
 
         setCameraLocked(false)
         function unPausePhysics() {
@@ -132,7 +151,11 @@ export default function Experience()
         // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
             unPausePhysics()
-                playMusic()
+            
+            const wait0 = setTimeout(() => {
+               playMusic() 
+            }, 20)
+            
             // setTrackingPlayer(true)
             
             const wait = setTimeout(() => {
@@ -159,20 +182,6 @@ export default function Experience()
     //         state.camera.lookAt(cameraTarget)
     //     } 
     // })
-
-
-
-    function playMusic() {
-        // backgroundMusic.volume = 0.5
-        // backgroundMusic.currentTime = 0
-
-
-        
-        if(musicEnabled) {
-            backgroundMusic.play()
-            console.log('Playing Music')
-        }
-    }
 
     return <>
 

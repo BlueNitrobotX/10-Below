@@ -127,8 +127,8 @@ export default function Player(props)
     useEffect(() => 
     {
 
-        const action = getAction(currentAnimation)
-        // const action = playerAnimations.actions[currentAnimation]
+        // const action = getAction(currentAnimation)
+        const action = playerAnimations.actions[currentAnimation]
 
         action
             .reset()

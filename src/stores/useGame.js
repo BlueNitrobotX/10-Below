@@ -70,18 +70,32 @@ export default create(subscribeWithSelector((set) =>
                 },
                  
             toggleMusicTrue: () =>
-            {
-                set((state) => 
                 {
-                    return { musicEnabled: true }
-                })
-            },
+                    set((state) => 
+                    {
+                        return { musicEnabled: true }
+                    })
+                },
 
             toggleMusicFalse: () =>
                 {
                     set((state) => 
                     {
                         return { musicEnabled: false }
+                    })
+                },
+            
+            toggleMusic: () =>
+                {
+                    set((state) => 
+                    {
+                        if(state.musicEnabled === true) {
+                            return { musicEnabled: false }
+                        } else if(state.musicEnabled === false) {
+                            return { musicEnabled: true }
+                        } else
+                        return {}
+                        
                     })
                 }
 
