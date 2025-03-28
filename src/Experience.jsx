@@ -62,10 +62,8 @@ export default function Experience()
     * 'Jumping' 
     * 'Running' 
     * 'Walking'
-    * 'Falling Idle' doesn't work
-    * 'Jumping Up' doesn't work
-    * 'Jumping Down' doesn't work
     */
+
 
         // Background music loop
 
@@ -98,20 +96,30 @@ export default function Experience()
     }
 
 
-
+    // Player Animation Controller
     useFrame(() => {
 
         const keys = getKeys()
 
         if(isIntroDone) {
 
-            if( keys.forward || keys.backward || keys.leftward || keys.rightward  && !keys.run) {
-                setCurrentAnimation('Walking')
-            } else if( keys.run ) {
-                setCurrentAnimation('Running')
-            } else if( keys.jump ) {
-                setCurrentAnimation('Jumping')
-            } else { 
+            if( keys.forward || keys.backward || keys.leftward || keys.rightward ) {
+
+                if( !keys.run ) {
+                    setCurrentAnimation('Walking')
+                }
+                if( keys.run ) {
+                    setCurrentAnimation('Running')
+                }
+
+            } 
+            // else if( keys.jump ) {
+            //     setCurrentAnimation('Jumping')
+            // } 
+            // else if( keys.easterEgg ) {
+            //     setCurrentAnimation('Gangnam_Style')
+            // }
+            else { 
                 setCurrentAnimation('Idle')
             }
 

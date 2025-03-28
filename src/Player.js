@@ -50,16 +50,16 @@ export default function Player(props)
 
     const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
 
-    const playerModel = useLoader(GLTFLoader, './animatedModel6.glb')
+    const playerModel = useLoader(GLTFLoader, './animatedModel8.glb')
 
     const playerAnimations = useAnimations(playerModel.animations, playerModel.scene)
 
-    const actionIdle = playerAnimations.actions.Idle
-    const actionFalling = playerAnimations.actions.Falling
-    const actionGangnamStyle = playerAnimations.actions.Gangnam_Style
-    const actionJumping = playerAnimations.actions.Jumping
-    const actionRunning = playerAnimations.actions.Running
-    const actionWalking = playerAnimations.actions.Walking
+    const actionIdle = playerAnimations.actions.Idle_Root
+    const actionFalling = playerAnimations.actions.Falling_Root
+    const actionGangnamStyle = playerAnimations.actions[6] //Might not work
+    const actionJumping = playerAnimations.actions.Jumping_Root
+    const actionRunning = playerAnimations.actions.Running2
+    const actionWalking = playerAnimations.actions.Walking2
     // const actionJumpingUp = playerAnimations.actions.Jumping_Up
     // const actionJumpingDown = playerAnimations.actions.Jumping_Down
     // const actionFallingIdle = playerAnimations.actions.Falling_Idle
@@ -116,7 +116,7 @@ export default function Player(props)
             return actionRunning
         }
         else if(x === 'Walking') {
-            actionWalking
+            return actionWalking
         } else
 
         console.warn('[CUSTOM ERROR] argument x passed in getAction(x) is not recognized')
@@ -127,8 +127,8 @@ export default function Player(props)
     useEffect(() => 
     {
 
-        // const action = getAction(currentAnimation)
-        const action = playerAnimations.actions[currentAnimation]
+        const action = getAction(currentAnimation)
+        // const action = playerAnimations.actions[currentAnimation]
 
         action
             .reset()
