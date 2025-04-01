@@ -103,14 +103,22 @@ export default function() {
         { phase === 'settings' && musicEnabled === false && <div className="settingsToggleMuteUnchecked" onClick={ nowToggleMusic } >X</div> }
         { phase === 'settings' && musicEnabled === true && <div className="settingsToggleMuteChecked" onClick={ nowToggleMusic } >X</div> }
 
-        { phase === 'settings' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
+        { phase === 'settings' && <div className="backToMenu" onClick={ nowMenu } >x</div> }
 
 
         {/* Credits */}
 
-        { phase === 'credits' && <div className="creditsText" >credits placeholder</div> }
+        { phase === 'credits' && <div className="creditsText" >
+            Developer - BlueNitrobotX <br/>
+            <br/>
+            Mentor - Nathnael Argaw <br/>
+            <br/>
+            Three.js Journey - Bruno Simon <br/>
+            <br/>
+            Music - Suno AI
+            </div> }
 
-        { phase === 'credits' && <div className="backToMenu" onClick={ nowMenu } > b </div> }
+        { phase === 'credits' && <div className="backToMenu" onClick={ nowMenu } >x</div> }
         
 
         {/* Loading Screen */}

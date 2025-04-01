@@ -289,10 +289,15 @@ body,
 {
     color: white;
     position: absolute;
+    text-align: center;
+    vertical-align: middle;
     font-family: 'Bebas Neue', cursive;
-    font-size: 5vh;
-    top: 50%;
-    left: 50%;
+    font-size: 7vh;
+    height: 30%;
+    width: 50%;
+    top: 15%;
+    left: 25%;
+    user-select: none;
 }
 
 .backToMenu
@@ -300,8 +305,29 @@ body,
     position: absolute;
     text-align: center;
     vertical-align: center;
-    color: white;
+    font-size: 5vh;
+    color: rgb(255, 255, 255);
     background: rgba(26, 25, 25, 0.719);
+    outline: white;
+    border-radius: 50%;
+    left: 10%;
+    top: 10%;
+    width: 60px;
+    height: 60px;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
+    justify-content: center;
+}
+
+.backToMenu:hover
+{
+    position: absolute;
+    text-align: center;
+    vertical-align: center;
+    font-size: 5vh;
+    color: rgb(255, 255, 255);
+    background: rgba(48, 47, 47, 0.719);
     outline: white;
     border-radius: 50%;
     left: 10%;
