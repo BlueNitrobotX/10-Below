@@ -1,5 +1,5 @@
 import { RigidBody, useRapier } from "@react-three/rapier"
-import { useLoader, useFrame } from "@react-three/fiber"
+import { useLoader, useFrame, useThree } from "@react-three/fiber"
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { useGLTF, useFBX, useKeyboardControls, useTexture, useAnimations } from "@react-three/drei"
 import { Suspense, useState, useEffect, useRef, useMemo } from 'react'
@@ -69,7 +69,10 @@ export default function Player(props)
 
     useFrame(() => {
         if( phase === 'playing') {
-            window.appData.playerPosition = player.current.translation()
+            const xyz = player.current.translation()
+            window.appData.playerX = xyz.x
+            window.appData.playerY = xyz.y
+            window.appData.playerZ = xyz.z
         }
     })
 
@@ -174,6 +177,64 @@ export default function Player(props)
     // const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
     // const playerGeometry = playerModel.children[0].geometry
     // const playerMaterial = new THREE.MeshStandardMaterial({ map: playerTexture })
+
+
+
+    
+
+    // Gameplay camera manager
+    const { camera } = useThree()
+    const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3())
+    const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
+
+    let theta = ( - Math.PI / 2 )
+    let radius = 3
+    let height = 1
+
+
+    useFrame((state, delta) => {
+        if( true ) {
+            const cameraTarget = new THREE.Vector3(window.appData.playerX, window.appData.playerY, window.appData.playerZ)
+            const cameraPosition = new THREE.Vector3(window.appData.playerX + ( Math.cos(theta) * radius ), window.appData.playerY + height, window.appData.playerZ + ( Math.sin(theta) * radius ) )
+
+            smoothedCameraPosition.lerp(cameraPosition, 7 * delta)
+            smoothedCameraTarget.lerp(cameraTarget, 7 * delta)
+
+            camera.position.copy(smoothedCameraPosition)
+            camera.lookAt(smoothedCameraTarget)
+
+        }
+    })
+
+    // const { theta, radius, height } = useControls({
+        
+    //     theta: 
+    //     {
+    //         value: ( - Math.PI / 2 ),
+    //         min: ( - 4 * Math.PI ),
+    //         max: ( 4 * Math.PI ),
+    //         step: 0.01
+    //     },
+
+    //     radius: 
+    //     {
+    //        value: 3,
+    //        min: 0,
+    //        max: 7,
+    //        step: 0.1
+    //     },
+
+    //     height:
+    //     {
+    //         value: 1,
+    //         min: -2,
+    //         max: 4,
+    //         step: 0.01
+    //     }
+
+    // })
+
+
 
         return <>
 

@@ -1,7 +1,7 @@
 import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html, CameraControls } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
-import { Physics, useRapier } from '@react-three/rapier'
+import { Physics, RigidBody, useRapier } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
 import Ecctrl from "ecctrl"
 import Player from './Player.js'
@@ -11,6 +11,7 @@ import { useFrame, useThree, extend } from '@react-three/fiber'
 import { FogExp2 } from 'three'
 import { create, createStore } from 'zustand'
 import * as THREE from 'three'
+import { useControls } from 'leva'
 
 export default function Experience()
 {
@@ -28,7 +29,7 @@ export default function Experience()
 
     const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
-    const { scene } = useThree()
+    const { scene, camera } = useThree()
     const [ subscribeKeys, getKeys ] = useKeyboardControls()
     const phase = useGame((state) => state.phase)
     const die = useGame((state) => state.die)
@@ -41,7 +42,7 @@ export default function Experience()
             playerX: 0,
             playerY: 60,
             playerZ: 0,
-            heightRayTOI: 60
+            // heightRayTOI: 60
         }
 
     const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
@@ -190,6 +191,7 @@ export default function Experience()
     //         state.camera.lookAt(cameraTarget)
     //     } 
     // })
+
 
     return <>
 
