@@ -25,7 +25,7 @@ const keyboardMap = [
 const root = ReactDOM.createRoot(document.querySelector('#root'))
 
 root.render( <>
-    <KeyboardControls map={keyboardMap}>
+    <KeyboardControls map={ keyboardMap }>
 
             <Canvas 
             shadows

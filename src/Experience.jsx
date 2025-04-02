@@ -192,7 +192,6 @@ export default function Experience()
     //     } 
     // })
 
-
     return <>
 
         <OrbitControls makeDefault target={ [ 0, -10, 0 ] } />

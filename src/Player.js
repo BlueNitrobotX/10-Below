@@ -191,6 +191,21 @@ export default function Player(props)
     let radius = 3
     let height = 1
 
+    let panning = false
+    let cursorX = 0
+
+    const sizes = {
+        width: window.innerWidth,
+        height: window.innerHeight
+    }
+
+    function enablePanning() { panning = true }
+    function disablePanning() { panning = false }
+
+    window.addEventListener("mousedown", enablePanning)
+    window.addEventListener("mouseup", disablePanning)
+
+
 
     useFrame((state, delta) => {
         if( true ) {
@@ -205,6 +220,30 @@ export default function Player(props)
 
         }
     })
+
+    useFrame((state, delta) => {
+
+        // console.log("cursorX", cursorX)
+        // console.log("state.pointer.x", state.pointer.x)
+
+        if( panning ) {
+                // cursor.x = event.clientX / sizes.width - 0.5
+                // cursor.y = event.clientY / sizes.height - 0.5
+                
+                if( state.pointer.x > cursorX ) {
+                    theta += 0.01
+                } else if( state.pointer.x < cursorX ) {
+                    theta -= 0.01
+                } else { theta = theta }
+        
+        }
+
+        cursorX = state.pointer.x
+        // cursor.y = state.pointer.y
+
+    })
+
+
 
     // const { theta, radius, height } = useControls({
         
@@ -252,14 +291,14 @@ export default function Player(props)
                     camFollowMult={1000}
                     camLerpMult={ 10 } 
                     turnVelMultiplier={1}
-                    turnSpeed={100} 
+                    turnSpeed={10} 
                     // disableFollowCam={ isGameplayCamera }
                     disableFollowCam={ true }
                     disableFollowCamTarget={ window.appData.playerPosition } 
                     autoBalance={ false }
                     // autoBalanceDampingC={ 0.000001 }
                     // autoBalanceDampingOnY={ 0.000001 }
-                    mode="CameraBasedMovement" 
+                    mode="FixedCamera" 
                     position-y={ 60 } 
                 >
                     <primitive object={ playerModel.scene } scale={ 0.4 } position-y={ -0.75 } />
