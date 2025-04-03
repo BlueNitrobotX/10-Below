@@ -23,10 +23,8 @@ export function Level()
 
     const terrainValues = useMemo(() => {
 
-        const seed = 2356 // alea(Math.random())
         const size = 100
-
-        return { seed: seed, size: size }
+        return { size: size }
 
     }, [])
 
@@ -51,7 +49,7 @@ export function Level()
 
         // Convert to array with x, y, and z coordinates (z is height in this case)
         let verticesXYZ = new Float32Array( verticesXY.length )
-        const noise = new Noise(terrainValues.seed)
+        const noise = new Noise(Math.random())
 
         for(let i = 0; i < verticesXY.length; i++ ) {
 
@@ -193,10 +191,9 @@ export function Level()
     const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
     const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
-
     return <>
 
-        <RigidBody type='fixed' colliders={ false }  > 
+        <RigidBody type='fixed' colliders={ false } > 
             <MeshCollider type="trimesh" >
             <mesh position={ [ 0, -10, 0 ] } geometry={ terrain.geometry } material={ invisibleMaterial }  scale={ 10 } />
             </MeshCollider>

@@ -1,4 +1,4 @@
-import { RigidBody, useRapier } from "@react-three/rapier"
+import { RigidBody, TrimeshCollider, useRapier } from "@react-three/rapier"
 import { useLoader, useFrame, useThree } from "@react-three/fiber"
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { useGLTF, useFBX, useKeyboardControls, useTexture, useAnimations } from "@react-three/drei"
@@ -14,7 +14,7 @@ import { create } from 'zustand'
 export default function Player(props)
 {
     const { rapier, world } = useRapier()
-    const { currentAnimation } = props.props
+    const { currentAnimation, isGameplayCamera } = props.props
 
     // const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
     // const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
@@ -208,7 +208,7 @@ export default function Player(props)
 
 
     useFrame((state, delta) => {
-        if( true ) {
+        if( isGameplayCamera ) {
             const cameraTarget = new THREE.Vector3(window.appData.playerX, window.appData.playerY, window.appData.playerZ)
             const cameraPosition = new THREE.Vector3(window.appData.playerX + ( Math.cos(theta) * radius ), window.appData.playerY + height, window.appData.playerZ + ( Math.sin(theta) * radius ) )
 

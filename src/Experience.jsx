@@ -1,7 +1,7 @@
 import { useGLTF, Stage, KeyboardControls, OrbitControls, Environment, useKeyboardControls, Html, CameraControls } from '@react-three/drei'
 import Lights from './Lights.jsx'
 import { Level } from './Level.js'
-import { Physics, RigidBody, useRapier } from '@react-three/rapier'
+import { CapsuleCollider, Physics, RigidBody, useRapier } from '@react-three/rapier'
 // import { Perf } from 'r3f-perf'
 import Ecctrl from "ecctrl"
 import Player from './Player.js'
@@ -27,6 +27,8 @@ export default function Experience()
     }
 )
 
+
+
     const player = useRef()
     const playerModel = useGLTF("./animatedModel4.glb")
     const { scene, camera } = useThree()
@@ -37,13 +39,15 @@ export default function Experience()
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
 
+    window.appData = {
+        playerX: 0,
+        playerY: 60,
+        playerZ: 0,
+        playerTouchingGround: false
+        // heightRayTOI: 60
+    }
 
-        window.appData = {
-            playerX: 0,
-            playerY: 60,
-            playerZ: 0,
-            // heightRayTOI: 60
-        }
+
 
     const [ currentAnimation, setCurrentAnimation ] = useState('Falling')
     const [ pauseState, setPauseState ] = useState(true)
@@ -52,6 +56,7 @@ export default function Experience()
     const [ isGameplayCamera, setCurrentCamera ] = useState(false)
     const [ orbitTarget, setOrbitTarget ] = useState( new THREE.Vector3( window.appData.playerX, window.appData.playerY, window.appData.playerZ ) )
     const [ isIntroDone, setIsIntroDone ] = useState(false)
+    const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
 
     let musicOn = true
     
@@ -64,17 +69,6 @@ export default function Experience()
     * 'Running' 
     * 'Walking'
     */
-
-
-        // Background music loop
-
-    // useFrame(() => {
-    //     if(backgroundMusic.ended) {
-    //         const wait = setTimeout(() => {
-    //             playMusic()
-    //         }, 1000)
-    //     }
-    // })
 
 
     useEffect(() => {
@@ -132,20 +126,7 @@ export default function Experience()
 
     })
 
-/**
- * {
-    "forward": false,
-    "backward": false,
-    "leftward": false,
-    "rightward": false,
-    "jump": false,
-    "run": false,
-    "action1": false,
-    "action2": false,
-    "action3": false,
-    "pause": false
-}
- */
+
 
     // Custom animation manager/cutscene manager
     useEffect((state) => {
@@ -155,7 +136,7 @@ export default function Experience()
             setPauseState(false)
         }
 
-        // camera.position.set(-3, -3, 10)
+        camera.position.set(-3, -3, 10)
 
         // Intro Cutscene
         document.addEventListener("beginStartSequence", () => {
@@ -165,32 +146,54 @@ export default function Experience()
                playMusic() 
             }, 20)
             
-            // setTrackingPlayer(true)
+            setTrackingPlayer(true)
             
-            const wait = setTimeout(() => {
-                setCurrentAnimation('Idle')
-                setIsIntroDone(true)
+            // const wait = setTimeout(() => {
+            //     setCurrentAnimation('Idle')
+            //     setIsIntroDone(true)
                 
             //     const wait2 = setTimeout(() => {
+            //         
             //         setTrackingPlayer(false)
             //         setCameraLocked(false)
             //         setCurrentCamera(true)
-            //         camera.position.set(window.appData.playerPosition.x, window.appData.playerPosition.y + 2, window.appData.playerPosition.z - 2)
-            //         camera.lookAt(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
             //     }, 1000)
 
-            }, 4250)
+            // }, 4250)
 
         })
 
     }, [])
 
-    // useFrame((state) => {
-    //     if( trackingPlayer === true ) {
-    //         const cameraTarget = new THREE.Vector3(window.appData.playerPosition.x, window.appData.playerPosition.y, window.appData.playerPosition.z)
-    //         state.camera.lookAt(cameraTarget)
-    //     } 
-    // })
+    function onCollisionEnter() {
+
+        setCurrentAnimation('Idle')
+        setIsIntroDone(true)
+
+        const wait2 = setTimeout(() => {
+
+            setTrackingPlayer(false)
+            setCameraLocked(false)
+            setCurrentCamera(true)
+        }, 1000)
+
+    }
+
+    useFrame((state, delta) => {
+        if( trackingPlayer === true ) {
+            const cameraTarget = new THREE.Vector3(window.appData.playerX, window.appData.playerY, window.appData.playerZ)
+            smoothedCameraTarget.lerp(cameraTarget, 9 * delta)
+            state.camera.lookAt(smoothedCameraTarget)
+        } 
+
+        if( window.appData.playerTouchingGround ) {
+            if(!isIntroDone) {
+                onCollisionEnter()
+            }
+        }
+
+
+    })
 
     return <>
 
@@ -209,12 +212,12 @@ export default function Experience()
 
         {/* { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> } */}
 
-            <Physics debug={ false } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
+            <Physics debug={ true } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />
                         <Level shadows />
-                        <Player props={ { isGameplayCamera: isGameplayCamera, currentAnimation: currentAnimation } } />
+                            <Player props={ { isGameplayCamera: isGameplayCamera, currentAnimation: currentAnimation } }  />
                 {/* </Stage> */}
             </Physics>
         
