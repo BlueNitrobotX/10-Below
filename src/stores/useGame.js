@@ -10,7 +10,17 @@ export default create(subscribeWithSelector((set) =>
 
             phase: 'menu',
             musicEnabled: true,
+            terrainHeightAtSpawn: 0,
     
+            setTerrainHeightAtSpawn: (x) => 
+            {
+                set((state) =>
+                {
+                    return { terrainHeightAtSpawn: x }
+                }
+            )
+            },
+
             //Start the game
             start: () => 
             {

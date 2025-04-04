@@ -36,6 +36,8 @@ export default function Experience()
     const phase = useGame((state) => state.phase)
     const die = useGame((state) => state.die)
     const musicEnabled = useGame((state) => state.musicEnabled)
+    const terrainHeightAtSpawn = useGame((state) => state.terrainHeightAtSpawn)
+
     // scene.fog = new FogExp2("#ffffff", 0.008)
 
 
@@ -43,9 +45,11 @@ export default function Experience()
         playerX: 0,
         playerY: 60,
         playerZ: 0,
-        playerTouchingGround: false
+        // terrainHeightAtSpawn: 0
         // heightRayTOI: 60
     }
+
+    
 
 
 
@@ -161,6 +165,7 @@ export default function Experience()
 
             // }, 4250)
 
+
         })
 
     }, [])
@@ -186,18 +191,20 @@ export default function Experience()
             state.camera.lookAt(smoothedCameraTarget)
         } 
 
-        if( window.appData.playerTouchingGround ) {
-            if(!isIntroDone) {
+        if(!isIntroDone) {
+            if(window.appData.playerY < ( terrainHeightAtSpawn + 0.1 )) {
                 onCollisionEnter()
             }
         }
-
+    
+        console.log("player height", window.appData.playerY)
+        console.log("terrain height", terrainHeightAtSpawn)
 
     })
 
     return <>
 
-        <OrbitControls makeDefault target={ [ 0, -10, 0 ] } />
+        {/* <OrbitControls makeDefault target={ [ 0, -10, 0 ] } /> */}
 
         <color args={ [ '#1f2b40' ] } attach="background" />
 
@@ -212,7 +219,7 @@ export default function Experience()
 
         {/* { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> } */}
 
-            <Physics debug={ true } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
+            <Physics debug={ false } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />

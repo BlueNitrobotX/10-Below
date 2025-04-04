@@ -1,4 +1,4 @@
-import { RigidBody, TrimeshCollider, useRapier } from "@react-three/rapier"
+import { CuboidCollider, RigidBody, TrimeshCollider, useRapier } from "@react-three/rapier"
 import { useLoader, useFrame, useThree } from "@react-three/fiber"
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { useGLTF, useFBX, useKeyboardControls, useTexture, useAnimations } from "@react-three/drei"
@@ -231,9 +231,9 @@ export default function Player(props)
                 // cursor.y = event.clientY / sizes.height - 0.5
                 
                 if( state.pointer.x > cursorX ) {
-                    theta += 0.01
+                    theta += 0.015
                 } else if( state.pointer.x < cursorX ) {
-                    theta -= 0.01
+                    theta -= 0.015
                 } else { theta = theta }
         
         }
@@ -272,8 +272,6 @@ export default function Player(props)
     //     }
 
     // })
-
-
 
         return <>
 

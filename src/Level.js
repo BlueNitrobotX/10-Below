@@ -8,11 +8,15 @@ import alea from 'alea'
 import { useControls } from 'leva'
 import * as BufferGeometryUtils from 'three/addons/utils/BufferGeometryUtils.js'
 import { cameraNear } from 'three/tsl'
+import useGame from "./stores/useGame"
 
 
 
 export function Level()
 {
+
+
+    const setTerrainHeightAtSpawn = useGame((state) => state.setTerrainHeightAtSpawn)
     const { camera } = useThree()
 
     useFrame(() => {
@@ -49,9 +53,9 @@ export function Level()
 
         // Convert to array with x, y, and z coordinates (z is height in this case)
         let verticesXYZ = new Float32Array( verticesXY.length )
-        const noise = new Noise(Math.random())
+        const noise = new Noise(Math.random()) 
 
-        for(let i = 0; i < verticesXY.length; i++ ) {
+        for( let i = 0; i < verticesXY.length; i++ ) {
 
             if(verticesXY[i] != 'placeholder') {
                 verticesXYZ[i] = verticesXY[i] // push x and y
@@ -71,6 +75,13 @@ export function Level()
             
             
         }
+
+        setTerrainHeightAtSpawn( ( - verticesXYZ[ (verticesXYZ.length / 3) ] ) * 200 ) 
+        
+
+        // console.log(verticesXYZ[ (verticesXYZ.length / 3) - 1 ])
+        // console.log(verticesXYZ[ (verticesXYZ.length / 3) ] * 200 )
+        // console.log(verticesXYZ[ (verticesXYZ.length / 3) + 1 ])
 
         return { heightMap: verticesXYZ, verticesXY: verticesXY}
 

@@ -29,6 +29,9 @@ root.render( <>
 
             <Canvas 
             shadows
+            onCreated={({ gl }) => {
+                gl.domElement.addEventListener("contextmenu", (e) => e.preventDefault());
+            }}
             // onPointerDown={(e) => { if (e.pointerType === "mouse") {e.target.requestPointerLock() } } }
             >
                 <Experience />  
