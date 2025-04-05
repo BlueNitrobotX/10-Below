@@ -197,8 +197,8 @@ export default function Experience()
             }
         }
     
-        console.log("player height", window.appData.playerY)
-        console.log("terrain height", terrainHeightAtSpawn)
+        // console.log("player height", window.appData.playerY)
+        // console.log("terrain height", terrainHeightAtSpawn)
 
     })
 
@@ -219,7 +219,7 @@ export default function Experience()
 
         {/* { !isGameplayCamera && <PerspectiveCamera fov={ 70 } near={ 0.05 } far={ 100 } position={ [ -3, -3, 10 ] } makeDefault={ cameraLocked } /> } */}
 
-            <Physics debug={ false } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
+            <Physics debug={ true } colliders={ false } paused={ pauseState } timeStep={ 1 / 120 } >
                 <Lights />
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } />

@@ -72,11 +72,9 @@ export function Level()
                         / ( 1 + 0.5 + 0.25 ) )   
                 ) ** 2 ) * 3
             }
-            
-            
         }
 
-        setTerrainHeightAtSpawn( ( - verticesXYZ[ (verticesXYZ.length / 3) ] ) * 200 ) 
+        setTerrainHeightAtSpawn( ( verticesXYZ[ (verticesXYZ.length / 3) ] * 200 ) -10 ) 
         
 
         // console.log(verticesXYZ[ (verticesXYZ.length / 3) - 1 ])
@@ -91,6 +89,7 @@ export function Level()
     {
         const procedurallyGeneratedFloorGeometry = new THREE.BufferGeometry()
         const pointsGeometry = new THREE.BufferGeometry()
+        const sensorGeometry = new THREE.BufferGeometry()
 
         const indices = []
         const verticesCount = []
@@ -118,6 +117,93 @@ export function Level()
             }
 
         }
+
+        let sensorVertices = new Float32Array( 75 )
+        let centerValue = heightMap.heightMap.length / 3
+
+        sensorVertices[0] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 7 ]) 
+        sensorVertices[1] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 6 ]) 
+        sensorVertices[2] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 5 ]) 
+        sensorVertices[3] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 4 ]) 
+        sensorVertices[4] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 3 ]) 
+        sensorVertices[5] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 2 ]) 
+        sensorVertices[6] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) - 1 ]) 
+        sensorVertices[7] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) ]) 
+        sensorVertices[8] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 1 ]) 
+        sensorVertices[9] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 2 ]) 
+        sensorVertices[10] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 3 ]) 
+        sensorVertices[11] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 4 ]) 
+        sensorVertices[12] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 5 ]) 
+        sensorVertices[13] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 6 ]) 
+        sensorVertices[14] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 2 ) + 7 ]) 
+
+        sensorVertices[15] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 7 ]) 
+        sensorVertices[16] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 6 ]) 
+        sensorVertices[17] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 5 ]) 
+        sensorVertices[18] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 4 ]) 
+        sensorVertices[19] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 3 ]) 
+        sensorVertices[20] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 2 ]) 
+        sensorVertices[21] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) - 1 ]) 
+        sensorVertices[22] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) ]) 
+        sensorVertices[23] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 1 ]) 
+        sensorVertices[24] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 2 ]) 
+        sensorVertices[25] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 3 ]) 
+        sensorVertices[26] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 4 ]) 
+        sensorVertices[27] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 5 ]) 
+        sensorVertices[28] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 6 ]) 
+        sensorVertices[29] = (heightMap.heightMap[ centerValue - ( terrainValues.size * 1 ) + 7 ]) 
+
+        sensorVertices[30] = (heightMap.heightMap[ centerValue - 7 ]) 
+        sensorVertices[31] = (heightMap.heightMap[ centerValue - 6 ]) 
+        sensorVertices[32] = (heightMap.heightMap[ centerValue - 5 ]) 
+        sensorVertices[33] = (heightMap.heightMap[ centerValue - 4 ]) 
+        sensorVertices[34] = (heightMap.heightMap[ centerValue - 3 ]) 
+        sensorVertices[35] = (heightMap.heightMap[ centerValue - 2 ]) 
+        sensorVertices[36] = (heightMap.heightMap[ centerValue - 1 ]) 
+        sensorVertices[37] = (heightMap.heightMap[ centerValue ]) 
+        sensorVertices[38] = (heightMap.heightMap[ centerValue + 1 ]) 
+        sensorVertices[39] = (heightMap.heightMap[ centerValue + 2 ]) 
+        sensorVertices[40] = (heightMap.heightMap[ centerValue + 3 ]) 
+        sensorVertices[41] = (heightMap.heightMap[ centerValue + 4 ]) 
+        sensorVertices[42] = (heightMap.heightMap[ centerValue + 5 ]) 
+        sensorVertices[43] = (heightMap.heightMap[ centerValue + 6 ]) 
+        sensorVertices[44] = (heightMap.heightMap[ centerValue + 7 ]) 
+
+        sensorVertices[45] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 7 ]) 
+        sensorVertices[46] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 6 ]) 
+        sensorVertices[47] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 5 ]) 
+        sensorVertices[48] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 4 ]) 
+        sensorVertices[49] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 3 ]) 
+        sensorVertices[50] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 2 ]) 
+        sensorVertices[51] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) - 1 ]) 
+        sensorVertices[52] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) ]) 
+        sensorVertices[53] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 1 ]) 
+        sensorVertices[54] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 2 ]) 
+        sensorVertices[55] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 3 ]) 
+        sensorVertices[56] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 4 ]) 
+        sensorVertices[57] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 5 ]) 
+        sensorVertices[58] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 6 ]) 
+        sensorVertices[59] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 1 ) + 7 ])
+
+        sensorVertices[60] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 7 ]) 
+        sensorVertices[61] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 6 ]) 
+        sensorVertices[62] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 5 ]) 
+        sensorVertices[63] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 4 ]) 
+        sensorVertices[64] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 3 ]) 
+        sensorVertices[65] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 2 ]) 
+        sensorVertices[66] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) - 1 ]) 
+        sensorVertices[67] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) ]) 
+        sensorVertices[68] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 1 ]) 
+        sensorVertices[69] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 2 ]) 
+        sensorVertices[70] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 3 ]) 
+        sensorVertices[71] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 4 ]) 
+        sensorVertices[72] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 5 ]) 
+        sensorVertices[73] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 6 ]) 
+        sensorVertices[74] = (heightMap.heightMap[ centerValue + ( terrainValues.size * 2 ) + 7 ]) 
+
+        console.log(sensorVertices)
+
+        sensorGeometry.setAttribute('position', new THREE.BufferAttribute(sensorVertices, 3))
 
         const verticesColors = new Float32Array(heightMap.heightMap.length)
 
@@ -155,6 +241,7 @@ export function Level()
 
         return {
             geometry: procedurallyGeneratedFloorGeometry,
+            sensorGeometry: sensorGeometry,
             material: tempFloorMaterial,
             indices: indices,
             pointsGeometry: pointsGeometry,
@@ -202,16 +289,35 @@ export function Level()
     const objectMaterial = new THREE.MeshStandardMaterial({ color: "darkred" })
     const invisibleMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 })
 
+
+
     return <>
 
+
+        {/* Invisible mesh with physics collider */}
         <RigidBody type='fixed' colliders={ false } > 
             <MeshCollider type="trimesh" >
             <mesh position={ [ 0, -10, 0 ] } geometry={ terrain.geometry } material={ invisibleMaterial }  scale={ 10 } />
             </MeshCollider>
-            
         </RigidBody>
 
+
+        {/* Visible mesh without physics collider */}
         <mesh position={ [ 0, -9.1, 0 ] } geometry={ terrain.geometry } material={ floorMaterial } map={ floorColorMap } aoMap={ floorARMMap } roughnessMap={ floorARMMap } metalnessMap={ floorARMMap } normalMap={ floorNormalMap } displacementMap={ floorHeightMap } vertexColors scale={ 10 } />
+
+
+        {/* Sensor collider */}
+        <RigidBody type='Fixed' > 
+            <MeshCollider 
+            type="trimesh" 
+            onIntersectionEnter={() => { console.log("Entered sensor area!") }} 
+            sensor
+            setSensor
+            >
+                    <mesh position={ [ 0, -9, 0 ] } geometry={ terrain.sensorGeometry } material={ invisibleMaterial } scale={ 10 } />
+            </MeshCollider>
+        </RigidBody>
+
 
         {/* <RigidBody type='fixed' colliders='hull' > 
             <points geometry={ terrain.pointsGeometry } material={ terrain.pointsMaterial } scale={ 4 } />
