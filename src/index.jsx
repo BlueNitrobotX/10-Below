@@ -13,7 +13,6 @@ const keyboardMap = [
     { name: "backward", keys: ["ArrowDown", "KeyS"] },
     { name: "leftward", keys: ["ArrowLeft", "KeyA"] },
     { name: "rightward", keys: ["ArrowRight", "KeyD"] },
-    // { name: "easterEgg", keys:["keyG"] },
     { name: "jump", keys: ["Space"] },
     { name: "run", keys: ["Shift"] },
     // Optional animation key map
@@ -30,9 +29,8 @@ root.render( <>
             <Canvas 
             shadows
             onCreated={({ gl }) => {
-                gl.domElement.addEventListener("contextmenu", (e) => e.preventDefault());
+                gl.domElement.addEventListener("contextmenu", (e) => e.preventDefault())
             }}
-            // onPointerDown={(e) => { if (e.pointerType === "mouse") {e.target.requestPointerLock() } } }
             >
                 <Experience />  
             </Canvas>

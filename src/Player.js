@@ -14,10 +14,9 @@ import { create } from 'zustand'
 export default function Player(props)
 {
     const { rapier, world } = useRapier()
-    const { currentAnimation, isGameplayCamera } = props.props
-
-    // const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3(10, 10, 10))
-    // const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
+    const { currentAnimation, isGameplayCamera, isIntroDone } = props.props
+    const [ localCurrentAnimation, setLocalCurrentAnimation ] = useState('Falling')
+    const [ subscribeKeys, getKeys ] = useKeyboardControls()
 
     const start = useGame((state) => state.start)
     const end = useGame((state) => state.end)
@@ -60,12 +59,6 @@ export default function Player(props)
     const actionJumping = playerAnimations.actions.Jumping_Root
     const actionRunning = playerAnimations.actions.Running2
     const actionWalking = playerAnimations.actions.Walking2
-    // const actionJumpingUp = playerAnimations.actions.Jumping_Up
-    // const actionJumpingDown = playerAnimations.actions.Jumping_Down
-    // const actionFallingIdle = playerAnimations.actions.Falling_Idle
-
-
-    // console.log(playerAnimations.actions['Falling'])
 
     useFrame(() => {
         if( phase === 'playing') {
@@ -76,21 +69,7 @@ export default function Player(props)
         }
     })
 
-    // useFrame(() => {
 
-    //     if( phase === 'playing' ) {
-    //         const { x, y, z } = player.current.translation()
-    //         const origin = { x: x, y: y, z: z }
-    //         const direction = { x: 0, y: -10000, z: 0 }
-    //         const ray = new rapier.Ray(origin, direction)
-    //         const hit = world.castRay(ray, 10, true)
-    //         // console.log(hit)
-    //         // console.log(player.current.translation())
-    //         // const toi = hit.timeOfImpact
-    //         // window.appData.heightRayTOI = toi
-    //     }
-
-    // })
 
     function getAction(x) {
 
@@ -99,22 +78,13 @@ export default function Player(props)
         }
         else if(x === 'Falling') {
             return actionFalling
-        }
-        // else if(x === 'Falling Idle') {
-        //     return actionFallingIdle
-        // }        
+        }     
         else if(x === 'Gangnam_Style') {
             return actionGangnamStyle
         }
         else if(x === 'Jumping') {
             return actionJumping
         }
-        // else if(x === 'Jumping Up') {
-        //     return actionJumpingUp
-        // }
-        // else if(x === 'Jumping Down') {
-        //     return actionJumpingDown
-        // }
         else if(x === 'Running') {
             return actionRunning
         }
@@ -126,6 +96,8 @@ export default function Player(props)
         return null
 
     }
+
+
 
     useEffect(() => 
     {
@@ -147,60 +119,61 @@ export default function Player(props)
 
     }, [ currentAnimation ])
 
-    // const animationSet = {
-    //     idle: "Idle",
-    //     walk: "Walking",
-    //     run: "run",
-    //     jumping: "Jumping"
-    //     jump: "Jumping Up",
-    //     jumpIdle: "Falling Idle",
-    //     jumpLand: "Jumping Down",
-    //     fall: "Falling"
-    // }
 
-    /**
-    * Current animations list:
-    * 'Falling' 
-    * 'Gangnam Style'
-    * 'Idle' 
-    * 'Jumping' 
-    * 'Running' 
-    * 'Walking'
-    * 'Falling Idle'
-    * 'Jumping Up'
-    * 'Jumping Down'
-    */
 
+    useEffect(() => 
+        {
     
-    // const playerModelPath = "./kenney_animated-characters-3/Model/characterMedium.fbx"
-    // const playerModel = useFBX(playerModelPath)
-    // const playerTexture = useTexture('./kenney_animated-characters-3/Skins/humanMaleA.png')
-    // const playerGeometry = playerModel.children[0].geometry
-    // const playerMaterial = new THREE.MeshStandardMaterial({ map: playerTexture })
-
-
-
+            const action = getAction(localCurrentAnimation)
     
+            action
+                .reset()
+                .fadeIn(0.5)
+                .play()
+            
+    
+    
+            return () => 
+            {
+                action.fadeOut(0.5)
+            }
+    
+        }, [ localCurrentAnimation ])
+
+
 
     // Gameplay camera manager
     const { camera } = useThree()
     const [ smoothedCameraPosition ] = useState(() => new THREE.Vector3())
     const [ smoothedCameraTarget ] = useState(() => new THREE.Vector3())
 
-    let theta = ( - Math.PI / 2 )
-    let radius = 3
-    let height = 1
+    const cameraParameters = useMemo(() => {   
+        let theta = ( - Math.PI / 2 )
+        let radius = 3
+        let height = 1
+    
+        let panning = false
+        let cursorX = 0
+    
+        const sizes = {
+            width: window.innerWidth,
+            height: window.innerHeight
+        }
 
-    let panning = false
-    let cursorX = 0
+        return { 
+            theta: theta, 
+            radius: radius, 
+            height: height, 
+            panning: panning, 
+            cursorX: cursorX, 
+            sizes: sizes 
+        }
 
-    const sizes = {
-        width: window.innerWidth,
-        height: window.innerHeight
-    }
+    }, [])
 
-    function enablePanning() { panning = true }
-    function disablePanning() { panning = false }
+
+    function enablePanning() { cameraParameters.panning = true }
+    function disablePanning() { cameraParameters.panning = false }
 
     window.addEventListener("mousedown", enablePanning)
     window.addEventListener("mouseup", disablePanning)
@@ -210,7 +183,7 @@ export default function Player(props)
     useFrame((state, delta) => {
         if( isGameplayCamera ) {
             const cameraTarget = new THREE.Vector3(window.appData.playerX, window.appData.playerY, window.appData.playerZ)
-            const cameraPosition = new THREE.Vector3(window.appData.playerX + ( Math.cos(theta) * radius ), window.appData.playerY + height, window.appData.playerZ + ( Math.sin(theta) * radius ) )
+            const cameraPosition = new THREE.Vector3(window.appData.playerX + ( Math.cos(cameraParameters.theta) * cameraParameters.radius ), window.appData.playerY + cameraParameters.height, window.appData.playerZ + ( Math.sin(cameraParameters.theta) * cameraParameters.radius ) )
 
             smoothedCameraPosition.lerp(cameraPosition, 7 * delta)
             smoothedCameraTarget.lerp(cameraTarget, 7 * delta)
@@ -223,55 +196,46 @@ export default function Player(props)
 
     useFrame((state, delta) => {
 
-        // console.log("cursorX", cursorX)
-        // console.log("state.pointer.x", state.pointer.x)
-
-        if( panning ) {
-                // cursor.x = event.clientX / sizes.width - 0.5
-                // cursor.y = event.clientY / sizes.height - 0.5
+        if( cameraParameters.panning ) {
                 
-                if( state.pointer.x > cursorX ) {
-                    theta += 0.015
-                } else if( state.pointer.x < cursorX ) {
-                    theta -= 0.015
-                } else { theta = theta }
+                if( state.pointer.x > cameraParameters.cursorX ) {
+                    cameraParameters.theta += 0.015
+                } else if( state.pointer.x < cameraParameters.cursorX ) {
+                    cameraParameters.theta -= 0.015
+                } else { cameraParameters.theta = cameraParameters.theta }
         
         }
 
-        cursorX = state.pointer.x
-        // cursor.y = state.pointer.y
+        cameraParameters.cursorX = state.pointer.x
 
     })
 
 
 
-    // const { theta, radius, height } = useControls({
-        
-    //     theta: 
-    //     {
-    //         value: ( - Math.PI / 2 ),
-    //         min: ( - 4 * Math.PI ),
-    //         max: ( 4 * Math.PI ),
-    //         step: 0.01
-    //     },
+    // Player Animation Controller
+    useFrame(() => {
 
-    //     radius: 
-    //     {
-    //        value: 3,
-    //        min: 0,
-    //        max: 7,
-    //        step: 0.1
-    //     },
+        const keys = getKeys()
 
-    //     height:
-    //     {
-    //         value: 1,
-    //         min: -2,
-    //         max: 4,
-    //         step: 0.01
-    //     }
+        if(isIntroDone) {
 
-    // })
+            if( keys.forward || keys.backward || keys.leftward || keys.rightward ) {
+
+                if( !keys.run ) {
+                    setLocalCurrentAnimation('Walking')
+                }
+                if( keys.run ) {
+                    setLocalCurrentAnimation('Running')
+                }
+            } 
+
+            else { 
+                setLocalCurrentAnimation('Idle')
+            }
+        }
+    })
+
+
 
         return <>
 
@@ -290,12 +254,9 @@ export default function Player(props)
                     camLerpMult={ 10 } 
                     turnVelMultiplier={1}
                     turnSpeed={10} 
-                    // disableFollowCam={ isGameplayCamera }
                     disableFollowCam={ true }
                     disableFollowCamTarget={ window.appData.playerPosition } 
                     autoBalance={ false }
-                    // autoBalanceDampingC={ 0.000001 }
-                    // autoBalanceDampingOnY={ 0.000001 }
                     mode="FixedCamera" 
                     position-y={ 60 } 
                 >
