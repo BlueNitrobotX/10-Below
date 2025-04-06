@@ -15,7 +15,6 @@ import { useControls } from 'leva'
 
 export default function Experience()
 {
-    // scene.fog = new FogExp2("#ffffff", 0.008)
     
     window.appData = {
         playerX: 0,
@@ -69,7 +68,7 @@ export default function Experience()
         useGame.subscribe(
             (state) => state.musicEnabled,
             (value) => {
-                console.log('Music Enabled?', value)
+                // console.log('Music Enabled?', value)
                 musicOn = !musicOn
             }
         )
@@ -81,7 +80,7 @@ export default function Experience()
     function playMusic() {
         if(musicOn) {
             backgroundMusic.play()
-            console.log('Playing Music')
+            // console.log('Playing Music')
         }
     }
 
@@ -136,6 +135,32 @@ export default function Experience()
 
     })
 
+    
+
+    // const lightformer = useMemo(() => {
+        
+    //     let radius = 3
+    //     let theta = 0
+
+    //     return { radius: radius, theta: theta }
+
+    // }, [])
+
+    // const [ lfz, setLFZ ] = useState(Math.sin(lightformer.theta) * lightformer.radius)
+    // const [ lfy, setLFY ] = useState(Math.cos(lightformer.theta) * lightformer.radius)
+
+    // useFrame((state, delta) => {
+    //     if(phase === 'playing') {
+    //         lightformer.theta += ( 4 * delta )
+    //         setLFY(Math.sin(lightformer.theta) * lightformer.radius)
+    //         setLFZ(Math.cos(lightformer.theta) * lightformer.radius)
+    //     }
+    // })
+
+
+
+    // scene.fog = new FogExp2("#ffffff", 0.008)
+
 
 
     return <>
@@ -151,11 +176,11 @@ export default function Experience()
                 {/* <Stage shadows={ true } > */}
                     <Environment background files={ './mud_road_puresky_1k.exr' } resolution={ 512 } > 
                         <Lightformer 
-                            position={ [ 1, -0.1, -3 ] } 
+                            position={ [ 0, 0, - 3 ] } 
                             color='white'
-                            intensity={ 40 }
+                            intensity={ 60 }
                             form='circle'
-                            scale={ 1.5 }
+                            scale={ 1.3 }
                         />
                     </Environment>
                         <Level shadows />
